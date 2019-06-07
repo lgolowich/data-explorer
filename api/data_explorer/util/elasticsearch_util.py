@@ -184,8 +184,8 @@ def get_facet_value_dict(filter_arr, facets):
 
 def get_field_description(es, field_name):
     s = Search(using=es, index=current_app.config['INDEX_NAME'] + '_fields')
-    s.update_from_dict(
-        {"query": {
+    s.update_from_dict({
+        "query": {
             "bool": {
                 "must": [{
                     "match": {
@@ -193,7 +193,8 @@ def get_field_description(es, field_name):
                     }
                 }]
             }
-        }})
+        }
+    })
     hits = s.execute()['hits']['hits']
     if len(hits) == 0:
         raise ValueError(
@@ -235,6 +236,45 @@ def get_field_type(es, field_name):
         field_name]['mapping'][last_part]['type']
 
 
+def is_time_series(es, field_name):
+    """Returns true iff field_name has time series data.
+    """
+    mapping = es.indices.get_field_mapping(
+        fields=field_name,
+        index=current_app.config['INDEX_NAME'],
+        doc_type='type')
+    its_field_name = field_name + '._is_time_series'
+    its_mapping = es.indices.get_field_mapping(
+        fields=its_field_name,
+        index=current_app.config['INDEX_NAME'],
+        doc_type='type')
+
+    if its_mapping:
+        last_part = its_field_name.split('.')[-1]
+        assert last_part == '_is_time_series'
+        its_field_type = its_mapping[current_app.config['INDEX_NAME']]['mappings']['type'][
+            its_field_name]['mapping'][last_part]['type']
+        assert its_field_type == 'boolean'
+        return True
+    elif mapping:
+        return False
+    else:
+        raise ValueError(
+            'elasticsearch_field_name %s not found in Elasticsearch index %s' %
+            (field_name, current_app.config['INDEX_NAME']))
+
+
+def get_time_series_vals(es, field_name, mapping):
+    submapping = mapping[current_app.config['INDEX_NAME']]['mappings']['type']['properties']
+    for subname in field_name.split('.'):
+        submapping = submapping[subname]['properties']
+    time_series_vals = submapping.keys()
+    assert '_is_time_series' in time_series_vals
+    time_series_vals.remove('_is_time_series')
+    time_series_vals = map(str, sorted(map(int, time_series_vals)))
+    return time_series_vals
+
+
 def _get_nested_paths_inner(prefix, mappings):
     nested_field_paths = []
     for field_name, field in mappings.items():
@@ -268,9 +308,8 @@ def get_nested_paths(es):
     nested_paths = []
     mappings = es.indices.get_mapping(index=current_app.config['INDEX_NAME'])
     nested_paths.extend(
-        _get_nested_paths_inner(
-            '', mappings[current_app.config['INDEX_NAME']]['mappings']['type']
-            ['properties']))
+        _get_nested_paths_inner('', mappings[current_app.config['INDEX_NAME']][
+            'mappings']['type']['properties']))
     return nested_paths
 
 
@@ -316,8 +355,8 @@ def get_elasticsearch_facet(es, elasticsearch_field_name, field_type):
         # is fixed, use AutoHistogramFacet instead. Will no longer need 2
         # steps.
         interval = _get_bucket_interval(es, elasticsearch_field_name)
-        es_facet = HistogramFacet(field=elasticsearch_field_name,
-                                  interval=interval)
+        es_facet = HistogramFacet(
+            field=elasticsearch_field_name, interval=interval)
 
     nested_facet = _maybe_get_nested_facet(elasticsearch_field_name, es_facet)
     if nested_facet:
@@ -353,8 +392,8 @@ def _delete_index(es, index):
         current_app.logger.info('Deleting %s index failed: %s' % (index, e))
         # Ignore 404: index not found
         index = es.indices.get(index=index, ignore=404)
-        current_app.logger.info('es.indices.get(index=%s): %s' %
-                                (index, index))
+        current_app.logger.info('es.indices.get(index=%s): %s' % (index,
+                                                                  index))
 
 
 def _create_index(es, index, mappings_file=None):

@@ -21,24 +21,28 @@ from elasticsearch.exceptions import TransportError
 # values. These arguments will rarely be specified as flags directly, aside from
 # occasional use during local debugging.
 parser = argparse.ArgumentParser()
-parser.add_argument('--path_prefix',
-                    type=str,
-                    help='Path prefix, e.g. /api, to serve from',
-                    default=os.environ.get('PATH_PREFIX'))
-parser.add_argument('--elasticsearch_url',
-                    type=str,
-                    help='Elasticsearch url, e.g. elasticsearch:9200',
-                    default=os.environ.get('ELASTICSEARCH_URL'))
-parser.add_argument('--dataset_config_dir',
-                    type=str,
-                    help='Dataset config dir. Can be relative or absolute',
-                    default=os.environ.get('DATASET_CONFIG_DIR'))
+parser.add_argument(
+    '--path_prefix',
+    type=str,
+    help='Path prefix, e.g. /api, to serve from',
+    default=os.environ.get('PATH_PREFIX'))
+parser.add_argument(
+    '--elasticsearch_url',
+    type=str,
+    help='Elasticsearch url, e.g. elasticsearch:9200',
+    default=os.environ.get('ELASTICSEARCH_URL'))
+parser.add_argument(
+    '--dataset_config_dir',
+    type=str,
+    help='Dataset config dir. Can be relative or absolute',
+    default=os.environ.get('DATASET_CONFIG_DIR'))
 
 if __name__ == '__main__':
-    parser.add_argument('--port',
-                        type=int,
-                        default=8390,
-                        help='The port on which to serve HTTP requests')
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=8390,
+        help='The port on which to serve HTTP requests')
     args = parser.parse_args()
 else:
     # Allow unknown args if we aren't the main program, these include flags to
@@ -91,9 +95,8 @@ def init_elasticsearch():
                                      'mappings.json')
         fields_path = os.path.join(app.app.config['DATASET_CONFIG_DIR'],
                                    'fields.json')
-        elasticsearch_util.load_index_from_json(es,
-                                                app.app.config['INDEX_NAME'],
-                                                index_path, mappings_path)
+        elasticsearch_util.load_index_from_json(
+            es, app.app.config['INDEX_NAME'], index_path, mappings_path)
         elasticsearch_util.load_index_from_json(
             es, app.app.config['FIELDS_INDEX_NAME'], fields_path)
 
@@ -102,8 +105,8 @@ def init_elasticsearch():
                                (app.app.config['INDEX_NAME'],
                                 app.app.config['ELASTICSEARCH_URL']))
 
-    document_count = CatClient(es).count(app.app.config['INDEX_NAME'],
-                                         format='json')[0]['count']
+    document_count = CatClient(es).count(
+        app.app.config['INDEX_NAME'], format='json')[0]['count']
     if document_count == '0':
         raise EnvironmentError('Index %s at %s has 0 documents' %
                                (app.app.config['INDEX_NAME'],
@@ -132,8 +135,8 @@ def _process_dataset():
     app.app.config['DATASET_NAME'] = _parse_json_file(config_path)['name']
     app.app.config['INDEX_NAME'] = elasticsearch_util.convert_to_index_name(
         app.app.config['DATASET_NAME'])
-    app.app.config[
-        'FIELDS_INDEX_NAME'] = '%s_fields' % app.app.config['INDEX_NAME']
+    app.app.config['FIELDS_INDEX_NAME'] = '%s_fields' % app.app.config[
+        'INDEX_NAME']
 
 
 def _process_ui():
@@ -176,6 +179,9 @@ def _process_facets(es):
     # Preserve order, so facets are returned in same order as the config file.
     facets = OrderedDict()
 
+    # Precompute mapping for getting time series values later.
+    mapping = es.indices.get_mapping(index=app.app.config['INDEX_NAME'])
+
     # Add a 'Samples Overview' facet if sample_file_columns were specified in
     # bigquery.json. This facet is mapped to multiple Elasticsearch facets, and
     # has keys - 'elasticsearch_field_names', 'type', 'ui_facet_name' and 'es_facet'.
@@ -199,26 +205,38 @@ def _process_facets(es):
     app.app.config['NESTED_PATHS'] = elasticsearch_util.get_nested_paths(es)
 
     for facet_config in facets_config:
-        es_field_name = facet_config['elasticsearch_field_name']
-        if es_field_name in facets:
-            raise EnvironmentError('%s appears more than once in ui.json' %
-                                   es_field_name)
-        field_type = elasticsearch_util.get_field_type(es, es_field_name)
-        ui_facet_name = facet_config['ui_facet_name']
-        if es_field_name.startswith('samples.'):
-            ui_facet_name = '%s (samples)' % ui_facet_name
+        es_base_field_name = facet_config['elasticsearch_field_name']
+        if elasticsearch_util.is_time_series(es, es_base_field_name):
+            is_time_series = True
+            time_series_vals = elasticsearch_util.get_time_series_vals(es, es_base_field_name, mapping)
+            es_field_names = [es_base_field_name + '.' + tsv
+                              for tsv in time_series_vals]
+        else:
+            is_time_series = False
+            es_field_names = [es_base_field_name]
 
-        facets[es_field_name] = {
-            'ui_facet_name': ui_facet_name,
-            'type': field_type
-        }
-        if 'ui_facet_description' in facet_config:
-            facets[es_field_name]['description'] = facet_config[
-                'ui_facet_description']
+        for es_field_name in es_field_names:
+            if es_field_name in facets:
+                raise EnvironmentError(
+                    '%s appears more than once in ui.json' % es_field_name)
+            field_type = elasticsearch_util.get_field_type(es, es_field_name)
+            ui_facet_name = facet_config['ui_facet_name']
+            if es_field_name.startswith('samples.'):
+                ui_facet_name = '%s (samples)' % ui_facet_name
+            if is_time_series:
+                ui_facet_name = '%s (time %s)' % (ui_facet_name,
+                                                  es_field_name.split('.')[-1])
+            facets[es_field_name] = {
+                'ui_facet_name': ui_facet_name,
+                'type': field_type
+            }
+            if 'ui_facet_description' in facet_config:
+                facets[es_field_name]['description'] = facet_config[
+                    'ui_facet_description']
 
-        facets[es_field_name][
-            'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
-                es, es_field_name, field_type)
+            facets[es_field_name][
+                'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
+                    es, es_field_name, field_type)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch
