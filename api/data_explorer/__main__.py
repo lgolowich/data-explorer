@@ -223,12 +223,10 @@ def _process_facets(es):
             ui_facet_name = facet_config['ui_facet_name']
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name
-            if is_time_series:
-                ui_facet_name = '%s (time %s)' % (ui_facet_name,
-                                                  es_field_name.split('.')[-1])
             facets[es_field_name] = {
                 'ui_facet_name': ui_facet_name,
-                'type': field_type
+                'type': field_type,
+                'is_time_series': is_time_series
             }
             if 'ui_facet_description' in facet_config:
                 facets[es_field_name]['description'] = facet_config[
