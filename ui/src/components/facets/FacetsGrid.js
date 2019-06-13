@@ -4,6 +4,7 @@ import GridListTile from "@material-ui/core/GridListTile";
 import { withStyles } from "@material-ui/core/styles";
 
 import HistogramFacet from "components/facets/HistogramFacet";
+import TimeSeriesHistogramFacet from "components/facets/TimeSeriesHistogramFacet";
 
 const styles = {
   root: {
@@ -19,15 +20,21 @@ const styles = {
 function FacetsGrid(props) {
   const { classes } = props;
 
-  const facetsList = props.facets.map(facet => {
-    return (
-      // Can't set padding the normal way because it's overridden by
-      // GridListTile's built-in "style=padding:2".
-      <GridListTile
-        classes={{ tile: classes.tile }}
-        key={facet.name}
-        style={{ padding: 0 }}
-      >
+  function getFacetDefinition(facet) {
+    if (facet.time_series_values && facet.time_series_values.length > 0) {
+      return (
+        <TimeSeriesHistogramFacet
+          facet={facet}
+          updateFacets={props.updateFacets}
+          handleRemoveFacet={props.handleRemoveFacet}
+          isExtraFacet={props.extraFacetEsFieldNames.includes(
+            facet.es_field_name
+          )}
+          selectedValues={props.selectedFacetValues.get(facet.es_field_name)}
+        />
+      );
+    } else {
+      return (
         <HistogramFacet
           facet={facet}
           updateFacets={props.updateFacets}
@@ -37,6 +44,20 @@ function FacetsGrid(props) {
           )}
           selectedValues={props.selectedFacetValues.get(facet.es_field_name)}
         />
+      );
+    }
+  }
+
+  const facetsList = props.facets.map(facet => {
+    return (
+      // Can't set padding the normal way because it's overridden by
+      // GridListTile's built-in "style=padding:2".
+      <GridListTile
+        classes={{ tile: classes.tile }}
+        key={facet.name}
+        style={{ padding: 0 }}
+      >
+	{getFacetDefinition(facet)}
       </GridListTile>
     );
   });
