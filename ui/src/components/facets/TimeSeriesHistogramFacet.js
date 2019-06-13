@@ -6,7 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import * as Style from "libs/style";
 import colors from "libs/colors";
 import FacetHeader from "components/facets/FacetHeader";
-import HistogramFacet from "components/facets/HistogramFacet";
+import HistogramPlot from "components/facets/HistogramPlot";
 
 const styles = {
   timeSeriesHistogramFacet: {
@@ -27,8 +27,17 @@ class TimeSeriesHistogramFacet extends Component {
     const { classes } = this.props;
 
     const gridItems = this.props.facet.time_series_values.map(tsv => {
+      let tsv_es_field_name = this.props.facet.es_field_name + "." + tsv.time;
       return (
-	<Grid item>{tsv.time}</Grid>
+	<Grid item key={tsv.time}>
+	  <HistogramPlot
+	    es_field_name={tsv_es_field_name}
+	    es_field_type={this.props.facet.es_field_type}
+	    values={tsv.values}
+ 	    selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
+	    updateFacets={this.props.updateFacets}
+	  />
+	</Grid>
       );
     });
 

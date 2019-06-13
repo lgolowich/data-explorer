@@ -30,7 +30,7 @@ function FacetsGrid(props) {
           isExtraFacet={props.extraFacetEsFieldNames.includes(
             facet.es_field_name
           )}
-          selectedValues={props.selectedFacetValues.get(facet.es_field_name)}
+          selectedFacetValues={props.selectedFacetValues}
         />
       );
     } else {

@@ -189,7 +189,11 @@ class Search extends React.Component {
   chipsFromSelectedFacetValues(selectedFacetValues) {
     let chips = [];
     selectedFacetValues.forEach((values, key) => {
-      let facetName = this.props.facets.get(key).name;
+      let keySplit = key.split(".")
+      let facetName = (this.props.facets.has(key)
+		       ? this.props.facets.get(key).name
+		       : (this.props.facets.get(keySplit.slice(0, -1).join(".")).name
+			  + " (time " + keySplit[keySplit.length - 1] + ")"));
       if (values.length > 0) {
         for (let value of values) {
           chips.push({
