@@ -117,7 +117,7 @@ class HistogramPlot extends Component {
     // es_field_name (from facet.es_field_name)
     // es_field_type (from facet.es_field_type)
     // values (from facet.values)
-    // selectedValues (from selectedValues)
+    // selectedValues (from selectedValues or from query into selectedFacetValues)
     // updateFacets (from updateFacets)
     super(props);
     this.isValueDimmed = this.isValueDimmed.bind(this);
