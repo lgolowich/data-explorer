@@ -164,5 +164,20 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 )
             )
 
+    if ts_field_name:
+        # Finish up last time series facet if necessary
+        facets.append(
+            Facet(
+                name=ts_ui_name,
+                description=ts_description,
+                es_field_name=ts_field_name,
+                es_field_type=ts_field_type,
+                values=[],
+                time_series_values=ts_values
+            )
+        )
+        ts_field_name = ""
+        ts_values = []
+
     return FacetsResponse(
         facets=facets, count=es_response._faceted_search.count())

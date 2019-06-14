@@ -352,7 +352,12 @@ class App extends Component {
     let facetsCopy = new Map(this.state.facets);
     facetsCopy.delete(facetValue);
     let selectedFacetValues = new Map(this.state.selectedFacetValues);
-    selectedFacetValues.delete(facetValue);
+    for (const facetValueKey of selectedFacetValues.keys()) {
+      if (facetValueKey === facetValue
+	  || facetValueKey.split(".").slice(0, -1).join(".") === facetValue) {
+	selectedFacetValues.delete(facetValueKey);
+      }
+    }
     let extraFacetEsFieldNames = this.state.extraFacetEsFieldNames.filter(
       n => n !== facetValue
     );
