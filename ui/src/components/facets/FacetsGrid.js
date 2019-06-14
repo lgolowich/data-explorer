@@ -4,7 +4,7 @@ import GridListTile from "@material-ui/core/GridListTile";
 import { withStyles } from "@material-ui/core/styles";
 
 import HistogramFacet from "components/facets/HistogramFacet";
-import TimeSeriesHistogramFacet from "components/facets/TimeSeriesHistogramFacet";
+import TimeSeriesFacet from "components/facets/TimeSeriesFacet";
 
 const styles = {
   root: {
@@ -27,7 +27,7 @@ function FacetsGrid(props) {
   function getFacetDefinition(facet) {
     if (isTimeSeries(facet)) {
       return (
-        <TimeSeriesHistogramFacet
+        <TimeSeriesFacet
           facet={facet}
           updateFacets={props.updateFacets}
           handleRemoveFacet={props.handleRemoveFacet}
