@@ -97,8 +97,8 @@ function isCategorical(es_field_type) {
 // https://i.imgur.com/I5A6EUn.png
 // This method increases chart width in those cases:
 // https://i.imgur.com/JSKHSkS.png
-function setWidth(facetValueNames) {
-  const defaultChartWidth = 200;
+function setWidth(facetValueNames, isTimeSeries) {
+  const defaultChartWidth = (isTimeSeries ? 75 : 200);
 
   const context = canvas(1, 1).getContext("2d");
   const nameWidths = facetValueNames.map(n => context.measureText(n).width);
@@ -129,7 +129,7 @@ class HistogramPlot extends Component {
     const { classes } = this.props;
 
     let facetValueNames = this.props.values.map(v => v.name);
-    setWidth(facetValueNames);
+    setWidth(facetValueNames, this.props.isTimeSeries);
 
     const vegaLiteSpec = Object.assign({}, baseVegaLiteSpec);
     if (!isCategorical(this.props.es_field_type)) {

@@ -8,6 +8,7 @@ import * as Style from "libs/style";
 import colors from "libs/colors";
 import FacetHeader from "components/facets/FacetHeader";
 import HistogramPlot from "components/facets/HistogramPlot";
+import TimeSeriesPlotHeader from "components/facets/TimeSeriesPlotHeader";
 
 const styles = {
   timeSeriesHistogramFacet: {
@@ -35,12 +36,18 @@ class TimeSeriesHistogramFacet extends Component {
       let tsv_es_field_name = this.props.facet.es_field_name + "." + tsv.time;
       return (
 	<GridListTile item key={tsv.time}>
+	  <TimeSeriesPlotHeader
+	    name={tsv.time}
+	    values={tsv.values}
+ 	    selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
+	  />
 	  <HistogramPlot
 	    es_field_name={tsv_es_field_name}
 	    es_field_type={this.props.facet.es_field_type}
 	    values={tsv.values}
  	    selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
 	    updateFacets={this.props.updateFacets}
+	    isTimeSeries={true}
 	  />
 	</GridListTile>
       );
@@ -53,6 +60,7 @@ class TimeSeriesHistogramFacet extends Component {
           selectedValues={this.props.selectedValues}
           handleRemoveFacet={this.props.handleRemoveFacet}
           isExtraFacet={this.props.isExtraFacet}
+	  isTimeSeries={true}
         />
         {this.props.facet.time_series_values && this.props.facet.time_series_values.length > 0 && (
           <GridList

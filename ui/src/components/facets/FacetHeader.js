@@ -22,7 +22,7 @@ const styles = {
     padding: "0px 18px 12px 14px"
   },
   facetHeader: {
-    backgroundColor: colors.grayBlue[5],
+    backgroundColor: colors.grayBlue[3],
     display: "grid",
     gridTemplateColumns: "auto 90px"
   },
@@ -68,7 +68,8 @@ class FacetHeader extends Component {
         }
       >
         <div className={classes.facetName}>{this.props.facet.name}</div>
-        {this.props.facet.name !== "Samples Overview" && (
+        {this.props.facet.name !== "Samples Overview" &&
+	 !this.props.isTimeSeries && (
           <div className={classes.totalFacetValueCount}>
             {this.sumFacetValueCounts(
               this.props.facet.values,

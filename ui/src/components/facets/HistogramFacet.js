@@ -32,6 +32,7 @@ class HistogramFacet extends Component {
           selectedValues={this.props.selectedValues}
           handleRemoveFacet={this.props.handleRemoveFacet}
           isExtraFacet={this.props.isExtraFacet}
+          isTimeSeries={false}
         />
 	{this.props.facet.values && this.props.facet.values.length > 0 && (
 	  <HistogramPlot
@@ -40,6 +41,7 @@ class HistogramFacet extends Component {
             values={this.props.facet.values}
             selectedValues={this.props.selectedValues}
 	    updateFacets={this.props.updateFacets}
+	    isTimeSeries={false}
           />
 	)}
       </div>
