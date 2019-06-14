@@ -20,8 +20,12 @@ const styles = {
 function FacetsGrid(props) {
   const { classes } = props;
 
+  function isTimeSeries(facet) {
+    return (facet.time_series_values && facet.time_series_values.length > 0);
+  }
+
   function getFacetDefinition(facet) {
-    if (facet.time_series_values && facet.time_series_values.length > 0) {
+    if (isTimeSeries(facet)) {
       return (
         <TimeSeriesHistogramFacet
           facet={facet}
@@ -56,6 +60,7 @@ function FacetsGrid(props) {
         classes={{ tile: classes.tile }}
         key={facet.name}
         style={{ padding: 0 }}
+        cols={isTimeSeries(facet) ? 3 : 1}
       >
 	{getFacetDefinition(facet)}
       </GridListTile>
