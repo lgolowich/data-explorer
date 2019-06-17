@@ -6,8 +6,6 @@ from elasticsearch_dsl import HistogramFacet
 from flask import current_app
 
 from data_explorer.models.facet import Facet
-from data_explorer.models.facet_value import FacetValue
-from data_explorer.models.time_series_facet_value import TimeSeriesFacetValue
 from data_explorer.models.facets_response import FacetsResponse
 from data_explorer.util import elasticsearch_util
 from data_explorer.util.dataset_faceted_search import DatasetFacetedSearch
@@ -166,7 +164,9 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 # elasticsearch-dsl returns boolean field keys as 0/1. Use the
                 # field's 'type' to convert back to boolean, if necessary.
                 if facet_info['type'] == 'boolean':
-                    interval_name = bool(interval_name)
+                    interval_name = bool(value_name)
+                else:
+                    interval_name = value_name
             value_names.append(interval_name)
             value_counts.append(count)
             if facet_info.get('is_time_series'):
