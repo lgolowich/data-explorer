@@ -40,8 +40,10 @@ def _process_extra_facets(extra_facets):
                               for tsv in time_series_vals]
         else:
             is_time_series = False
+            time_series_vals = []
             es_field_names = [es_base_field_name]
 
+        interval = elasticsearch_util.get_bucket_interval(es, es_base_field_name, time_series_vals)
         for es_field_name in es_field_names:
             field_type = elasticsearch_util.get_field_type(
                 es, es_field_name)
@@ -59,7 +61,7 @@ def _process_extra_facets(extra_facets):
                     es, es_base_field_name)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
-                    es, es_field_name, field_type)
+                    es, es_field_name, field_type, interval)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch

@@ -213,8 +213,10 @@ def _process_facets(es):
                               for tsv in time_series_vals]
         else:
             is_time_series = False
+            time_series_vals = []
             es_field_names = [es_base_field_name]
 
+        interval = -1
         for es_field_name in es_field_names:
             if es_field_name in facets:
                 raise EnvironmentError(
@@ -232,9 +234,11 @@ def _process_facets(es):
                 facets[es_field_name]['description'] = facet_config[
                     'ui_facet_description']
 
+            if field_type != 'text' and field_type != 'boolean' and interval < 0:
+                interval = elasticsearch_util.get_bucket_interval(es, es_base_field_name, time_series_vals)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
-                    es, es_field_name, field_type)
+                    es, es_field_name, field_type, interval)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch
