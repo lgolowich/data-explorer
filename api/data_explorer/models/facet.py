@@ -7,6 +7,7 @@ from typing import List, Dict  # noqa: F401
 
 from data_explorer.models.base_model_ import Model
 from data_explorer.models.facet_value import FacetValue  # noqa: F401,E501
+from data_explorer.models.time_series_facet_value import TimeSeriesFacetValue  # noqa: F401,E501
 from data_explorer import util
 
 
@@ -21,7 +22,8 @@ class Facet(Model):
                  description=None,
                  es_field_name=None,
                  es_field_type=None,
-                 values=None):  # noqa: E501
+                 values=None,
+                 time_series_values=None):  # noqa: E501
         """Facet - a model defined in Swagger
 
         :param name: The name of this Facet.  # noqa: E501
@@ -34,13 +36,16 @@ class Facet(Model):
         :type es_field_type: str
         :param values: The values of this Facet.  # noqa: E501
         :type values: List[FacetValue]
+        :param time_series_values: The time_series_values of this Facet.  # noqa: E501
+        :type time_series_values: List[TimeSeriesFacetValue]
         """
         self.swagger_types = {
             'name': str,
             'description': str,
             'es_field_name': str,
             'es_field_type': str,
-            'values': List[FacetValue]
+            'values': List[FacetValue],
+            'time_series_values': List[TimeSeriesFacetValue]
         }
 
         self.attribute_map = {
@@ -48,7 +53,8 @@ class Facet(Model):
             'description': 'description',
             'es_field_name': 'es_field_name',
             'es_field_type': 'es_field_type',
-            'values': 'values'
+            'values': 'values',
+            'time_series_values': 'time_series_values'
         }
 
         self._name = name
@@ -56,6 +62,7 @@ class Facet(Model):
         self._es_field_name = es_field_name
         self._es_field_type = es_field_type
         self._values = values
+        self._time_series_values = time_series_values
 
     @classmethod
     def from_dict(cls, dikt):
@@ -180,3 +187,24 @@ class Facet(Model):
         """
 
         self._values = values
+
+    @property
+    def time_series_values(self):
+        """Gets the time_series_values of this Facet.
+
+
+        :return: The time_series_values of this Facet.
+        :rtype: List[TimeSeriesFacetValue]
+        """
+        return self._time_series_values
+
+    @time_series_values.setter
+    def time_series_values(self, time_series_values):
+        """Sets the time_series_values of this Facet.
+
+
+        :param time_series_values: The time_series_values of this Facet.
+        :type time_series_values: List[TimeSeriesFacetValue]
+        """
+
+        self._time_series_values = time_series_values

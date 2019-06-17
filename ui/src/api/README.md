@@ -105,6 +105,7 @@ Class | Method | HTTP request | Description
  - [DataExplorerService.FacetsResponse](docs/FacetsResponse.md)
  - [DataExplorerService.SearchResponse](docs/SearchResponse.md)
  - [DataExplorerService.SearchResult](docs/SearchResult.md)
+ - [DataExplorerService.TimeSeriesFacetValue](docs/TimeSeriesFacetValue.md)
 
 
 ## Documentation for Authorization

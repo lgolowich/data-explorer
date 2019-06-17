@@ -11,3 +11,4 @@ from data_explorer.models.facet_value import FacetValue
 from data_explorer.models.facets_response import FacetsResponse
 from data_explorer.models.search_response import SearchResponse
 from data_explorer.models.search_result import SearchResult
+from data_explorer.models.time_series_facet_value import TimeSeriesFacetValue

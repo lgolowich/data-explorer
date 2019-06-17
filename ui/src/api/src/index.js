@@ -21,6 +21,7 @@ import FacetValue from './model/FacetValue';
 import FacetsResponse from './model/FacetsResponse';
 import SearchResponse from './model/SearchResponse';
 import SearchResult from './model/SearchResult';
+import TimeSeriesFacetValue from './model/TimeSeriesFacetValue';
 import DatasetApi from './api/DatasetApi';
 import ExportUrlApi from './api/ExportUrlApi';
 import FacetsApi from './api/FacetsApi';
@@ -112,6 +113,12 @@ export {
      * @property {module:model/SearchResult}
      */
     SearchResult,
+
+    /**
+     * The TimeSeriesFacetValue model constructor.
+     * @property {module:model/TimeSeriesFacetValue}
+     */
+    TimeSeriesFacetValue,
 
     /**
     * The DatasetApi service constructor.
