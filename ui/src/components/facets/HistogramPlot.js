@@ -8,7 +8,6 @@ import { withStyles } from "@material-ui/core/styles";
 import "./HistogramFacet.css";
 import * as Style from "libs/style";
 import colors from "libs/colors";
-import FacetHeader from "components/facets/FacetHeader";
 
 const styles = {
   vega: {

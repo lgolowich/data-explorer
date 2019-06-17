@@ -159,7 +159,7 @@ definitions:
           type: string
         description: Array of names of possible facet values.
       # Either values should be set, or both of time_names and
-      # time_series_values should be set, but not all three.
+      # time_series_value_counts should be set, but not all three.
       value_counts:
         type: array
         items:

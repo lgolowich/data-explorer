@@ -29,7 +29,7 @@ class TimeSeriesPlotHeader extends Component {
   constructor(props) {
     // Has props:
     // name: gives time
-    // values: from facet.time_series_values[i].values
+    // values: from facet.value_names and facet.time_series_value_counts
     // selectedValues: normal meaning
     super(props);
   }

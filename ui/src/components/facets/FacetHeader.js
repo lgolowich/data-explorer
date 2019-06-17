@@ -72,7 +72,7 @@ class FacetHeader extends Component {
 	 !this.props.isTimeSeries && (
           <div className={classes.totalFacetValueCount}>
             {this.sumFacetValueCounts(
-              this.props.facet.values,
+              this.props.values,
               this.props.selectedValues
             )}
           </div>

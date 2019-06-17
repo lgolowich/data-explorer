@@ -25,10 +25,19 @@ class HistogramFacet extends Component {
   render() {
     const { classes } = this.props;
 
+    let values = [];
+    for (let i = 0; i < this.props.facet.value_names; i++) {
+      values.push({
+	name: this.props.facet.value_names[i],
+	count: this.props.facet.value_counts[i]
+      });
+    }
+
     return (
       <div className={classes.histogramFacet}>
         <FacetHeader
           facet={this.props.facet}
+          values={values}
           selectedValues={this.props.selectedValues}
           handleRemoveFacet={this.props.handleRemoveFacet}
           isExtraFacet={this.props.isExtraFacet}
@@ -38,7 +47,7 @@ class HistogramFacet extends Component {
 	  <HistogramPlot
 	    es_field_name={this.props.facet.es_field_name}
             es_field_type={this.props.facet.es_field_type}
-            values={this.props.facet.values}
+            values={values}
             selectedValues={this.props.selectedValues}
 	    updateFacets={this.props.updateFacets}
 	    isTimeSeries={false}

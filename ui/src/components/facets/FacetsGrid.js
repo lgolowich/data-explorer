@@ -21,7 +21,7 @@ function FacetsGrid(props) {
   const { classes } = props;
 
   function isTimeSeries(facet) {
-    return (facet.time_series_values && facet.time_series_values.length > 0);
+    return (facet.time_names && facet.time_names.length > 0);
   }
 
   function getFacetDefinition(facet) {

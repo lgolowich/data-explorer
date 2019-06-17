@@ -25,6 +25,17 @@ const styles = {
   }
 };
 
+function getValues(value_names, value_counts) {
+  let values = []
+  for (let i = 0; i < value_names.length; i++) {
+    values.push({
+      name: value_names[i],
+      count: value_counts[i]
+    });
+  }
+  return values;
+}
+
 class TimeSeriesHistogramPlot extends Component {
   constructor(props) {
     super(props);
@@ -33,21 +44,25 @@ class TimeSeriesHistogramPlot extends Component {
   render() {
     const { classes } = this.props;
 
-    const gridItems = this.props.facet.time_series_values.map(tsv => {
-      let tsv_es_field_name = this.props.facet.es_field_name + "." + tsv.time;
-      return (
-	<div className={classes.gridItem} key={tsv.time}>
+    const gridItems = []
+    for (var ti = 0; ti < this.props.facet.time_names.length; ti++) {
+      let tsv_es_field_name = (this.props.facet.es_field_name + "." +
+			       this.props.facet.time_names[ti]);
+      let values = getValues(this.props.facet.value_names,
+			     this.props.facet.time_series_value_counts[ti]);
+      gridItems.push(
+	<div className={classes.gridItem} key={this.props.facet.time_names[ti]}>
 	  <Grid item>
 	    <TimeSeriesPlotHeader
-	      name={tsv.time}
-	      values={tsv.values}
+	      name={this.props.facet.time_names[ti]}
+	      values={values}
  	      selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
 	    />
 	    <div className={classes.histogramPlot}>
 	      <HistogramPlot
 	        es_field_name={tsv_es_field_name}
 	        es_field_type={this.props.facet.es_field_type}
-	        values={tsv.values}
+	        values={values}
  	        selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
 	        updateFacets={this.props.updateFacets}
 	        isTimeSeries={true}
@@ -56,7 +71,7 @@ class TimeSeriesHistogramPlot extends Component {
 	  </Grid>
 	</div>
       );
-    });
+    }
 
     return (
       <div className={classes.timeSeriesHistogramPlot}>

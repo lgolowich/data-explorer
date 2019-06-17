@@ -35,7 +35,7 @@ class TimeSeriesFacet extends Component {
           isExtraFacet={this.props.isExtraFacet}
 	  isTimeSeries={true}
         />
-        {this.props.facet.time_series_values && this.props.facet.time_series_values.length > 0 && (
+        {this.props.facet.time_names && this.props.facet.time_names.length > 0 && (
 	  <TimeSeriesHistogramPlot
 	    facet={this.props.facet}
 	    updateFacets={this.props.updateFacets}
