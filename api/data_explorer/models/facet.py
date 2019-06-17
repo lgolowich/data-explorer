@@ -6,8 +6,6 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from data_explorer.models.base_model_ import Model
-from data_explorer.models.facet_value import FacetValue  # noqa: F401,E501
-from data_explorer.models.time_series_facet_value import TimeSeriesFacetValue  # noqa: F401,E501
 from data_explorer import util
 
 
@@ -22,8 +20,9 @@ class Facet(Model):
                  description=None,
                  es_field_name=None,
                  es_field_type=None,
-                 values=None,
-                 time_series_values=None):  # noqa: E501
+                 value_names=None,
+                 value_counts=None,
+                 time_series_value_counts=None):  # noqa: E501
         """Facet - a model defined in Swagger
 
         :param name: The name of this Facet.  # noqa: E501
@@ -34,18 +33,21 @@ class Facet(Model):
         :type es_field_name: str
         :param es_field_type: The es_field_type of this Facet.  # noqa: E501
         :type es_field_type: str
-        :param values: The values of this Facet.  # noqa: E501
-        :type values: List[FacetValue]
-        :param time_series_values: The time_series_values of this Facet.  # noqa: E501
-        :type time_series_values: List[TimeSeriesFacetValue]
+        :param value_names: The value_names of this Facet.  # noqa: E501
+        :type value_names: List[str]
+        :param value_counts: The value_counts of this Facet.  # noqa: E501
+        :type value_counts: List[int]
+        :param time_series_value_counts: The time_series_value_counts of this Facet.  # noqa: E501
+        :type time_series_value_counts: List[List[int]]
         """
         self.swagger_types = {
             'name': str,
             'description': str,
             'es_field_name': str,
             'es_field_type': str,
-            'values': List[FacetValue],
-            'time_series_values': List[TimeSeriesFacetValue]
+            'value_names': List[str],
+            'value_counts': List[int],
+            'time_series_value_counts': List[List[int]]
         }
 
         self.attribute_map = {
@@ -53,16 +55,18 @@ class Facet(Model):
             'description': 'description',
             'es_field_name': 'es_field_name',
             'es_field_type': 'es_field_type',
-            'values': 'values',
-            'time_series_values': 'time_series_values'
+            'value_names': 'value_names',
+            'value_counts': 'value_counts',
+            'time_series_value_counts': 'time_series_value_counts'
         }
 
         self._name = name
         self._description = description
         self._es_field_name = es_field_name
         self._es_field_type = es_field_type
-        self._values = values
-        self._time_series_values = time_series_values
+        self._value_names = value_names
+        self._value_counts = value_counts
+        self._time_series_value_counts = time_series_value_counts
 
     @classmethod
     def from_dict(cls, dikt):
@@ -168,43 +172,70 @@ class Facet(Model):
         self._es_field_type = es_field_type
 
     @property
-    def values(self):
-        """Gets the values of this Facet.
+    def value_names(self):
+        """Gets the value_names of this Facet.
 
+        Array of names of possible facet values.  # noqa: E501
 
-        :return: The values of this Facet.
-        :rtype: List[FacetValue]
+        :return: The value_names of this Facet.
+        :rtype: List[str]
         """
-        return self._values
+        return self._value_names
 
-    @values.setter
-    def values(self, values):
-        """Sets the values of this Facet.
+    @value_names.setter
+    def value_names(self, value_names):
+        """Sets the value_names of this Facet.
 
+        Array of names of possible facet values.  # noqa: E501
 
-        :param values: The values of this Facet.
-        :type values: List[FacetValue]
+        :param value_names: The value_names of this Facet.
+        :type value_names: List[str]
         """
 
-        self._values = values
+        self._value_names = value_names
 
     @property
-    def time_series_values(self):
-        """Gets the time_series_values of this Facet.
+    def value_counts(self):
+        """Gets the value_counts of this Facet.
 
+        Array of counts for each facet value.  # noqa: E501
 
-        :return: The time_series_values of this Facet.
-        :rtype: List[TimeSeriesFacetValue]
+        :return: The value_counts of this Facet.
+        :rtype: List[int]
         """
-        return self._time_series_values
+        return self._value_counts
 
-    @time_series_values.setter
-    def time_series_values(self, time_series_values):
-        """Sets the time_series_values of this Facet.
+    @value_counts.setter
+    def value_counts(self, value_counts):
+        """Sets the value_counts of this Facet.
 
+        Array of counts for each facet value.  # noqa: E501
 
-        :param time_series_values: The time_series_values of this Facet.
-        :type time_series_values: List[TimeSeriesFacetValue]
+        :param value_counts: The value_counts of this Facet.
+        :type value_counts: List[int]
         """
 
-        self._time_series_values = time_series_values
+        self._value_counts = value_counts
+
+    @property
+    def time_series_value_counts(self):
+        """Gets the time_series_value_counts of this Facet.
+
+        2-dimensional array of facet value counts, indexed by time then value.   # noqa: E501
+
+        :return: The time_series_value_counts of this Facet.
+        :rtype: List[List[int]]
+        """
+        return self._time_series_value_counts
+
+    @time_series_value_counts.setter
+    def time_series_value_counts(self, time_series_value_counts):
+        """Sets the time_series_value_counts of this Facet.
+
+        2-dimensional array of facet value counts, indexed by time then value.   # noqa: E501
+
+        :param time_series_value_counts: The time_series_value_counts of this Facet.
+        :type time_series_value_counts: List[List[int]]
+        """
+
+        self._time_series_value_counts = time_series_value_counts

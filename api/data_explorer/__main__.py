@@ -208,9 +208,11 @@ def _process_facets(es):
         es_base_field_name = facet_config['elasticsearch_field_name']
         if elasticsearch_util.is_time_series(es, es_base_field_name):
             is_time_series = True
-            time_series_vals = elasticsearch_util.get_time_series_vals(es, es_base_field_name, mapping)
-            es_field_names = [es_base_field_name + '.' + tsv
-                              for tsv in time_series_vals]
+            time_series_vals = elasticsearch_util.get_time_series_vals(
+                es, es_base_field_name, mapping)
+            es_field_names = [
+                es_base_field_name + '.' + tsv for tsv in time_series_vals
+            ]
         else:
             is_time_series = False
             time_series_vals = []
@@ -235,7 +237,8 @@ def _process_facets(es):
                     'ui_facet_description']
 
             if field_type != 'text' and field_type != 'boolean' and interval < 0:
-                interval = elasticsearch_util.get_bucket_interval(es, es_base_field_name, time_series_vals)
+                interval = elasticsearch_util.get_bucket_interval(
+                    es, es_base_field_name, time_series_vals)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
                     es, es_field_name, field_type, interval)

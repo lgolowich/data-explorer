@@ -44,14 +44,17 @@ def _get_metrics(es, field_name):
     for nesting in nestings:
         aggs = aggs.get(nesting)
 
-    return (aggs['min']['value'], aggs['max']['value'], aggs['cardinality']['value'])
+    return (aggs['min']['value'], aggs['max']['value'],
+            aggs['cardinality']['value'])
 
 
 def _get_field_range_and_cardinality(es, field_name, time_series_vals):
     if time_series_vals:
-        total_min, total_max, total_card = _get_metrics(es, "%s.%s" % (field_name, time_series_vals[0]))
+        total_min, total_max, total_card = _get_metrics(
+            es, "%s.%s" % (field_name, time_series_vals[0]))
         for tsv in time_series_vals[1:]:
-            cur_min, cur_max, cur_card = _get_metrics(es, "%s.%s" % (field_name, tsv))
+            cur_min, cur_max, cur_card = _get_metrics(es, "%s.%s" %
+                                                      (field_name, tsv))
             total_min = min(total_min, cur_min)
             total_max = max(total_max, cur_max)
             total_card = max(total_card, cur_card)
@@ -66,7 +69,8 @@ def _get_field_range_and_cardinality(es, field_name, time_series_vals):
 
 
 def get_bucket_interval(es, field_name, time_series_vals):
-    field_range, cardinality = _get_field_range_and_cardinality(es, field_name, time_series_vals)
+    field_range, cardinality = _get_field_range_and_cardinality(
+        es, field_name, time_series_vals)
     if field_range < 1:
         return .1
     elif field_range == 1 and cardinality > 2:
@@ -266,8 +270,8 @@ def is_time_series(es, field_name):
     if its_mapping:
         last_part = its_field_name.split('.')[-1]
         assert last_part == '_is_time_series'
-        its_field_type = its_mapping[current_app.config['INDEX_NAME']]['mappings']['type'][
-            its_field_name]['mapping'][last_part]['type']
+        its_field_type = its_mapping[current_app.config['INDEX_NAME']][
+            'mappings']['type'][its_field_name]['mapping'][last_part]['type']
         assert its_field_type == 'boolean'
         return True
     elif mapping:
@@ -279,7 +283,8 @@ def is_time_series(es, field_name):
 
 
 def get_time_series_vals(es, field_name, mapping):
-    submapping = mapping[current_app.config['INDEX_NAME']]['mappings']['type']['properties']
+    submapping = mapping[current_app.config['INDEX_NAME']]['mappings']['type'][
+        'properties']
     for subname in field_name.split('.'):
         submapping = submapping[subname]['properties']
     time_series_vals = submapping.keys()
@@ -349,7 +354,8 @@ def _maybe_get_nested_facet(elasticsearch_field_name, es_facet):
     return es_facet
 
 
-def get_elasticsearch_facet(es, elasticsearch_field_name, field_type, interval):
+def get_elasticsearch_facet(es, elasticsearch_field_name, field_type,
+                            interval):
     if field_type == 'text':
         # Use ".keyword" because we want aggregation on keyword field, not
         # term field. See

@@ -17,11 +17,9 @@ import DatasetResponse from './model/DatasetResponse';
 import ExportUrlRequest from './model/ExportUrlRequest';
 import ExportUrlResponse from './model/ExportUrlResponse';
 import Facet from './model/Facet';
-import FacetValue from './model/FacetValue';
 import FacetsResponse from './model/FacetsResponse';
 import SearchResponse from './model/SearchResponse';
 import SearchResult from './model/SearchResult';
-import TimeSeriesFacetValue from './model/TimeSeriesFacetValue';
 import DatasetApi from './api/DatasetApi';
 import ExportUrlApi from './api/ExportUrlApi';
 import FacetsApi from './api/FacetsApi';
@@ -91,12 +89,6 @@ export {
     Facet,
 
     /**
-     * The FacetValue model constructor.
-     * @property {module:model/FacetValue}
-     */
-    FacetValue,
-
-    /**
      * The FacetsResponse model constructor.
      * @property {module:model/FacetsResponse}
      */
@@ -113,12 +105,6 @@ export {
      * @property {module:model/SearchResult}
      */
     SearchResult,
-
-    /**
-     * The TimeSeriesFacetValue model constructor.
-     * @property {module:model/TimeSeriesFacetValue}
-     */
-    TimeSeriesFacetValue,
 
     /**
     * The DatasetApi service constructor.

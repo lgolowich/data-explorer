@@ -35,18 +35,20 @@ def _process_extra_facets(extra_facets):
 
         if elasticsearch_util.is_time_series(es, es_base_field_name):
             is_time_series = True
-            time_series_vals = elasticsearch_util.get_time_series_vals(es, es_base_field_name, mapping)
-            es_field_names = [es_base_field_name + '.' + tsv
-                              for tsv in time_series_vals]
+            time_series_vals = elasticsearch_util.get_time_series_vals(
+                es, es_base_field_name, mapping)
+            es_field_names = [
+                es_base_field_name + '.' + tsv for tsv in time_series_vals
+            ]
         else:
             is_time_series = False
             time_series_vals = []
             es_field_names = [es_base_field_name]
 
-        interval = elasticsearch_util.get_bucket_interval(es, es_base_field_name, time_series_vals)
+        interval = elasticsearch_util.get_bucket_interval(
+            es, es_base_field_name, time_series_vals)
         for es_field_name in es_field_names:
-            field_type = elasticsearch_util.get_field_type(
-                es, es_field_name)
+            field_type = elasticsearch_util.get_field_type(es, es_field_name)
             ui_facet_name = es_base_field_name.split('.')[-1]
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name
@@ -111,7 +113,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
     for es_field_name, facet_info in combined_facets.iteritems():
         if ts_field_name and (
             (not facet_info.get('is_time_series'))
-            or '.'.join(es_field_name.split('.')[:-1]) != ts_field_name):
+                or '.'.join(es_field_name.split('.')[:-1]) != ts_field_name):
             # No more values in this time series, so add element to facets
             facets.append(
                 Facet(
@@ -120,9 +122,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                     es_field_name=ts_field_name,
                     es_field_type=ts_field_type,
                     values=[],
-                    time_series_values=ts_values
-                )
-            )
+                    time_series_values=ts_values))
             ts_field_name = ""
             ts_values = []
 
@@ -150,10 +150,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
             ts_field_type = facet_info.get('type')
             ts_values.append(
                 TimeSeriesFacetValue(
-                    time=int(es_field_name.split('.')[-1]),
-                    values=values
-                )
-            )
+                    time=int(es_field_name.split('.')[-1]), values=values))
         else:
             facets.append(
                 Facet(
@@ -162,9 +159,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                     es_field_name=es_field_name,
                     es_field_type=facet_info.get('type'),
                     values=values,
-                    time_series_values=[]
-                )
-            )
+                    time_series_values=[]))
 
     if ts_field_name:
         # Finish up last time series facet if necessary
@@ -175,9 +170,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 es_field_name=ts_field_name,
                 es_field_type=ts_field_type,
                 values=[],
-                time_series_values=ts_values
-            )
-        )
+                time_series_values=ts_values))
         ts_field_name = ""
         ts_values = []
 

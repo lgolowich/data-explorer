@@ -153,34 +153,26 @@ definitions:
       es_field_type:
         type: string
         description: The Elasticsearch field type.
+      value_names:
+        type: array
+        items:
+          type: string
+        description: Array of names of possible facet values.
       # Exactly one of values or time_series_values should be set.
-      values:
+      value_counts:
         type: array
         items:
-          $ref: "#/definitions/FacetValue"
-      time_series_values:
+          type: integer
+        description: Array of counts for each facet value.
+      time_series_value_counts:
         type: array
         items:
-          $ref: "#/definitions/TimeSeriesFacetValue"
-  FacetValue:
-    description: A facet value, for example, "Male"/34.
-    properties:
-      name:
-        type: string
-        description: Facet value name, for example, "Male".
-      count:
-        type: integer
-        description: Facet value count.
-  TimeSeriesFacetValue:
-    description: A list of facet values in a time series.
-    properties:
-      time:
-        type: integer
-        description: Value used for time series.
-      values:
-        type: array
-        items:
-          $ref: "#/definitions/FacetValue"
+          type: array
+          items:
+            type: integer
+        description: >
+          2-dimensional array of facet value counts, indexed by time
+          then value.
   ExportUrlResponse:
     description: "Information for sending data to Terra"
     properties:

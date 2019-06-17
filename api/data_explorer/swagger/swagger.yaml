@@ -124,49 +124,35 @@ definitions:
     example:
       count: 1
       facets:
-      - values:
-        - name: "name"
-          count: 0
-        - name: "name"
-          count: 0
+      - time_series_value_counts:
+        - - 6
+          - 6
+        - - 6
+          - 6
+        value_counts:
+        - 0
+        - 0
         name: "name"
         description: "description"
         es_field_name: "es_field_name"
-        time_series_values:
-        - values:
-          - name: "name"
-            count: 0
-          - name: "name"
-            count: 0
-          time: 6
-        - values:
-          - name: "name"
-            count: 0
-          - name: "name"
-            count: 0
-          time: 6
+        value_names:
+        - "value_names"
+        - "value_names"
         es_field_type: "es_field_type"
-      - values:
-        - name: "name"
-          count: 0
-        - name: "name"
-          count: 0
+      - time_series_value_counts:
+        - - 6
+          - 6
+        - - 6
+          - 6
+        value_counts:
+        - 0
+        - 0
         name: "name"
         description: "description"
         es_field_name: "es_field_name"
-        time_series_values:
-        - values:
-          - name: "name"
-            count: 0
-          - name: "name"
-            count: 0
-          time: 6
-        - values:
-          - name: "name"
-            count: 0
-          - name: "name"
-            count: 0
-          time: 6
+        value_names:
+        - "value_names"
+        - "value_names"
         es_field_type: "es_field_type"
   Facet:
     properties:
@@ -182,68 +168,42 @@ definitions:
       es_field_type:
         type: "string"
         description: "The Elasticsearch field type."
-      values:
+      value_names:
         type: "array"
+        description: "Array of names of possible facet values."
         items:
-          $ref: "#/definitions/FacetValue"
-      time_series_values:
+          type: "string"
+      value_counts:
         type: "array"
+        description: "Array of counts for each facet value."
         items:
-          $ref: "#/definitions/TimeSeriesFacetValue"
+          type: "integer"
+      time_series_value_counts:
+        type: "array"
+        description: "2-dimensional array of facet value counts, indexed by time then\
+          \ value.\n"
+        items:
+          type: "array"
+          items:
+            type: "integer"
     description: "A facet. For example, the Gender facet would include the facet name\
       \ \"Gender\", as well as counts for all possible values.\n"
     example:
-      values:
-      - name: "name"
-        count: 0
-      - name: "name"
-        count: 0
+      time_series_value_counts:
+      - - 6
+        - 6
+      - - 6
+        - 6
+      value_counts:
+      - 0
+      - 0
       name: "name"
       description: "description"
       es_field_name: "es_field_name"
-      time_series_values:
-      - values:
-        - name: "name"
-          count: 0
-        - name: "name"
-          count: 0
-        time: 6
-      - values:
-        - name: "name"
-          count: 0
-        - name: "name"
-          count: 0
-        time: 6
+      value_names:
+      - "value_names"
+      - "value_names"
       es_field_type: "es_field_type"
-  FacetValue:
-    properties:
-      name:
-        type: "string"
-        description: "Facet value name, for example, \"Male\"."
-      count:
-        type: "integer"
-        description: "Facet value count."
-    description: "A facet value, for example, \"Male\"/34."
-    example:
-      name: "name"
-      count: 0
-  TimeSeriesFacetValue:
-    properties:
-      time:
-        type: "integer"
-        description: "Value used for time series."
-      values:
-        type: "array"
-        items:
-          $ref: "#/definitions/FacetValue"
-    description: "A list of facet values in a time series."
-    example:
-      values:
-      - name: "name"
-        count: 0
-      - name: "name"
-        count: 0
-      time: 6
   ExportUrlResponse:
     properties:
       url:

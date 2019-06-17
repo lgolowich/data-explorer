@@ -13,8 +13,6 @@
 
 
 import ApiClient from '../ApiClient';
-import FacetValue from './FacetValue';
-import TimeSeriesFacetValue from './TimeSeriesFacetValue';
 
 
 
@@ -71,11 +69,14 @@ export default class Facet {
             if (data.hasOwnProperty('es_field_type')) {
                 obj['es_field_type'] = ApiClient.convertToType(data['es_field_type'], 'String');
             }
-            if (data.hasOwnProperty('values')) {
-                obj['values'] = ApiClient.convertToType(data['values'], [FacetValue]);
+            if (data.hasOwnProperty('value_names')) {
+                obj['value_names'] = ApiClient.convertToType(data['value_names'], ['String']);
             }
-            if (data.hasOwnProperty('time_series_values')) {
-                obj['time_series_values'] = ApiClient.convertToType(data['time_series_values'], [TimeSeriesFacetValue]);
+            if (data.hasOwnProperty('value_counts')) {
+                obj['value_counts'] = ApiClient.convertToType(data['value_counts'], ['Number']);
+            }
+            if (data.hasOwnProperty('time_series_value_counts')) {
+                obj['time_series_value_counts'] = ApiClient.convertToType(data['time_series_value_counts'], [['Number']]);
             }
         }
         return obj;
@@ -102,13 +103,20 @@ export default class Facet {
     */
     es_field_type = undefined;
     /**
-    * @member {Array.<module:model/FacetValue>} values
+    * Array of names of possible facet values.
+    * @member {Array.<String>} value_names
     */
-    values = undefined;
+    value_names = undefined;
     /**
-    * @member {Array.<module:model/TimeSeriesFacetValue>} time_series_values
+    * Array of counts for each facet value.
+    * @member {Array.<Number>} value_counts
     */
-    time_series_values = undefined;
+    value_counts = undefined;
+    /**
+    * 2-dimensional array of facet value counts, indexed by time then value. 
+    * @member {Array.<Array.<Number>>} time_series_value_counts
+    */
+    time_series_value_counts = undefined;
 
 
 
