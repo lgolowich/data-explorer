@@ -22,6 +22,7 @@ class Facet(Model):
                  es_field_type=None,
                  value_names=None,
                  value_counts=None,
+                 time_names=None,
                  time_series_value_counts=None):  # noqa: E501
         """Facet - a model defined in Swagger
 
@@ -37,6 +38,8 @@ class Facet(Model):
         :type value_names: List[str]
         :param value_counts: The value_counts of this Facet.  # noqa: E501
         :type value_counts: List[int]
+        :param time_names: The time_names of this Facet.  # noqa: E501
+        :type time_names: List[int]
         :param time_series_value_counts: The time_series_value_counts of this Facet.  # noqa: E501
         :type time_series_value_counts: List[List[int]]
         """
@@ -47,6 +50,7 @@ class Facet(Model):
             'es_field_type': str,
             'value_names': List[str],
             'value_counts': List[int],
+            'time_names': List[int],
             'time_series_value_counts': List[List[int]]
         }
 
@@ -57,6 +61,7 @@ class Facet(Model):
             'es_field_type': 'es_field_type',
             'value_names': 'value_names',
             'value_counts': 'value_counts',
+            'time_names': 'time_names',
             'time_series_value_counts': 'time_series_value_counts'
         }
 
@@ -66,6 +71,7 @@ class Facet(Model):
         self._es_field_type = es_field_type
         self._value_names = value_names
         self._value_counts = value_counts
+        self._time_names = time_names
         self._time_series_value_counts = time_series_value_counts
 
     @classmethod
@@ -218,10 +224,33 @@ class Facet(Model):
         self._value_counts = value_counts
 
     @property
+    def time_names(self):
+        """Gets the time_names of this Facet.
+
+        Array of times.  # noqa: E501
+
+        :return: The time_names of this Facet.
+        :rtype: List[int]
+        """
+        return self._time_names
+
+    @time_names.setter
+    def time_names(self, time_names):
+        """Sets the time_names of this Facet.
+
+        Array of times.  # noqa: E501
+
+        :param time_names: The time_names of this Facet.
+        :type time_names: List[int]
+        """
+
+        self._time_names = time_names
+
+    @property
     def time_series_value_counts(self):
         """Gets the time_series_value_counts of this Facet.
 
-        2-dimensional array of facet value counts, indexed by time then value.   # noqa: E501
+        2-dimensional array of facet value counts, indexed by time then value; indexes correspond to time_names and then value_names.   # noqa: E501
 
         :return: The time_series_value_counts of this Facet.
         :rtype: List[List[int]]
@@ -232,7 +261,7 @@ class Facet(Model):
     def time_series_value_counts(self, time_series_value_counts):
         """Sets the time_series_value_counts of this Facet.
 
-        2-dimensional array of facet value counts, indexed by time then value.   # noqa: E501
+        2-dimensional array of facet value counts, indexed by time then value; indexes correspond to time_names and then value_names.   # noqa: E501
 
         :param time_series_value_counts: The time_series_value_counts of this Facet.
         :type time_series_value_counts: List[List[int]]

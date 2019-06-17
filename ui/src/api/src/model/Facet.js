@@ -75,6 +75,9 @@ export default class Facet {
             if (data.hasOwnProperty('value_counts')) {
                 obj['value_counts'] = ApiClient.convertToType(data['value_counts'], ['Number']);
             }
+            if (data.hasOwnProperty('time_names')) {
+                obj['time_names'] = ApiClient.convertToType(data['time_names'], ['Number']);
+            }
             if (data.hasOwnProperty('time_series_value_counts')) {
                 obj['time_series_value_counts'] = ApiClient.convertToType(data['time_series_value_counts'], [['Number']]);
             }
@@ -113,7 +116,12 @@ export default class Facet {
     */
     value_counts = undefined;
     /**
-    * 2-dimensional array of facet value counts, indexed by time then value. 
+    * Array of times.
+    * @member {Array.<Number>} time_names
+    */
+    time_names = undefined;
+    /**
+    * 2-dimensional array of facet value counts, indexed by time then value; indexes correspond to time_names and then value_names. 
     * @member {Array.<Array.<Number>>} time_series_value_counts
     */
     time_series_value_counts = undefined;

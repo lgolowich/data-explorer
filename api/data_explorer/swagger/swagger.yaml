@@ -122,13 +122,16 @@ definitions:
           \ example, this could be 40, representing 40 people.\n"
     description: "Results from a faceted search."
     example:
-      count: 1
+      count: 5
       facets:
-      - time_series_value_counts:
-        - - 6
-          - 6
-        - - 6
-          - 6
+      - time_names:
+        - 6
+        - 6
+        time_series_value_counts:
+        - - 1
+          - 1
+        - - 1
+          - 1
         value_counts:
         - 0
         - 0
@@ -139,11 +142,14 @@ definitions:
         - "value_names"
         - "value_names"
         es_field_type: "es_field_type"
-      - time_series_value_counts:
-        - - 6
-          - 6
-        - - 6
-          - 6
+      - time_names:
+        - 6
+        - 6
+        time_series_value_counts:
+        - - 1
+          - 1
+        - - 1
+          - 1
         value_counts:
         - 0
         - 0
@@ -178,10 +184,15 @@ definitions:
         description: "Array of counts for each facet value."
         items:
           type: "integer"
+      time_names:
+        type: "array"
+        description: "Array of times."
+        items:
+          type: "integer"
       time_series_value_counts:
         type: "array"
         description: "2-dimensional array of facet value counts, indexed by time then\
-          \ value.\n"
+          \ value; indexes correspond to time_names and then value_names.\n"
         items:
           type: "array"
           items:
@@ -189,11 +200,14 @@ definitions:
     description: "A facet. For example, the Gender facet would include the facet name\
       \ \"Gender\", as well as counts for all possible values.\n"
     example:
+      time_names:
+      - 6
+      - 6
       time_series_value_counts:
-      - - 6
-        - 6
-      - - 6
-        - 6
+      - - 1
+        - 1
+      - - 1
+        - 1
       value_counts:
       - 0
       - 0
