@@ -26,7 +26,7 @@ class HistogramFacet extends Component {
     const { classes } = this.props;
 
     let values = [];
-    for (let i = 0; i < this.props.facet.value_names; i++) {
+    for (let i = 0; i < this.props.facet.value_names.length; i++) {
       values.push({
 	name: this.props.facet.value_names[i],
 	count: this.props.facet.value_counts[i]
@@ -43,7 +43,7 @@ class HistogramFacet extends Component {
           isExtraFacet={this.props.isExtraFacet}
           isTimeSeries={false}
         />
-	{this.props.facet.values && this.props.facet.values.length > 0 && (
+	{this.props.facet.value_counts && this.props.facet.value_counts.length > 0 && (
 	  <HistogramPlot
 	    es_field_name={this.props.facet.es_field_name}
             es_field_type={this.props.facet.es_field_type}
