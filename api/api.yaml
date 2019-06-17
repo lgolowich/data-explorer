@@ -158,12 +158,18 @@ definitions:
         items:
           type: string
         description: Array of names of possible facet values.
-      # Exactly one of values or time_series_values should be set.
+      # Either values should be set, or both of time_names and
+      # time_series_values should be set, but not all three.
       value_counts:
         type: array
         items:
           type: integer
         description: Array of counts for each facet value.
+      time_names:
+        type: array
+        items:
+          type: integer
+        description: Array of times.
       time_series_value_counts:
         type: array
         items:
@@ -172,7 +178,8 @@ definitions:
             type: integer
         description: >
           2-dimensional array of facet value counts, indexed by time
-          then value.
+          then value; indexes correspond to time_names and then
+          value_names.
   ExportUrlResponse:
     description: "Information for sending data to Terra"
     properties:
