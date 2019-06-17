@@ -169,8 +169,19 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                     interval_name = value_name
             value_names.append(interval_name)
             value_counts.append(count)
+
+            # Update ts_value_names[interval_name] to store ordering
+            # information for the value names (by name if the name is
+            # numeric, or by count if it is text/boolean).
             if facet_info.get('is_time_series'):
-                ts_value_names[interval_name] = value_name
+                if facet_info.get('type') == 'text' or facet_info.get('type') == 'boolean':
+                    if interval_name in ts_value_names:
+                        # Subtract to show highest count first.
+                        ts_value_names[interval_name] -= count
+                    else:
+                        ts_value_names[interval_name] = -count
+                else:
+                    ts_value_names[interval_name] = value_name
 
         if facet_info.get('is_time_series'):
             ts_field_name = '.'.join(es_field_name.split('.')[:-1])
