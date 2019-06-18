@@ -1,5 +1,6 @@
 import json
 import urllib
+import math
 
 from elasticsearch import helpers
 from elasticsearch_dsl import Search
@@ -79,39 +80,22 @@ def get_bucket_interval(es, field_name, time_series_vals):
         # Some datasets have (0, 1) instead of booleans. Return 1 for that case
         # instead of .1.
         return 1
-    elif field_range < 8:
+    elif field_range < 15:
         return 1
-    elif field_range < 20:
-        return 2
-    elif field_range < 150:
-        # Make the ranges easy to read (10-19,20-29 instead of 10-17,18-25).
-        return 10
-    elif field_range < 300:
-        return 20
-    elif field_range < 800:
-        return 50
-    elif field_range < 1500:
-        return 100
-    elif field_range < 15000:
-        return 1000
-    elif field_range < 150000:
-        return 10000
-    elif field_range < 1500000:
-        return 100000
-    elif field_range < 15000000:
-        return 1000000
-    elif field_range < 150000000:
-        return 10000000
-    elif field_range < 1500000000:
-        return 100000000
-    elif field_range < 15000000000:
-        return 1000000000
-    elif field_range < 150000000000:
-        return 10000000000
-    elif field_range < 1500000000000:
-        return 100000000000
     else:
-        return 1000000000000
+        # Set bucket interval to 1, 2, or 5 * 10^n to get around 8 to
+        # 15 intervals.
+        log_range = math.log10(field_range)
+        int_range = int(log_range)
+        frac_range = log_range - int_range
+        if frac_range < math.log10(1.5):
+            return 10**(int_range - 1)
+        elif frac_range < math.log10(3):
+            return 2 * 10**(int_range - 1)
+        elif frac_range < math.log10(8):
+            return 5 * 10**(int_range - 1)
+        else:
+            return 10**int_range
 
 
 def range_to_number(interval_str):
