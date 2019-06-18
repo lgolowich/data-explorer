@@ -173,7 +173,8 @@ class HistogramPlot extends Component {
 
     // Create transparent bar that extends the entire length of the chart. This
     // makes tooltip/selection easier for facet values that have very low count.
-    const maxFacetValue = Math.max(...data.values.map(v => v.count));
+    const maxFacetValue = ('maxFacetValue' in this.props ? this.props.maxFacetValue
+			   : Math.max(...data.values.map(v => v.count)));
     data.values = data.values.concat(
       data.values.map(v => {
         const invisible = Object.assign({}, v);

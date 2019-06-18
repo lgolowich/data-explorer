@@ -36,6 +36,12 @@ function getValues(value_names, value_counts) {
   return values;
 }
 
+// From https://stackoverflow.com/questions/39342575
+function maxCount(arr) {
+  let maxRow = arr.map(function(row){ return Math.max.apply(Math, row); });
+  return Math.max.apply(null, maxRow);
+}
+
 class TimeSeriesHistogramPlot extends Component {
   constructor(props) {
     super(props);
@@ -50,6 +56,7 @@ class TimeSeriesHistogramPlot extends Component {
 			       this.props.facet.time_names[ti]);
       let values = getValues(this.props.facet.value_names,
 			     this.props.facet.time_series_value_counts[ti]);
+      let maxFacetValue = maxCount(this.props.facet.time_series_value_counts);
       gridItems.push(
 	<div className={classes.gridItem} key={this.props.facet.time_names[ti]}>
 	  <Grid item>
@@ -64,6 +71,7 @@ class TimeSeriesHistogramPlot extends Component {
 	        es_field_type={this.props.facet.es_field_type}
 	        values={values}
  	        selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
+	        maxFacetValue={maxFacetValue}
 	        updateFacets={this.props.updateFacets}
 	        isTimeSeries={true}
 	      />
