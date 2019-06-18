@@ -7,21 +7,20 @@ import colors from "libs/colors";
 const styles = {
   plotHeader: {
     backgroundColor: colors.grayBlue[5],
-    display: "grid",
-    gridTemplateColumns: "auto 90px"
   },
   plotName: {
     color: colors.gray[1],
     fontSize: 14,
-    fontWeight: 300,
-    padding: "11px 0 12px 14px"
+    fontWeight: 600,
+    textAlign: "center",
+    padding: "10px 0 7px 0"
   },
   totalFacetValueCount: {
     color: colors.gray[1],
     fontSize: 14,
-    fontWeight: 600,
-    padding: "11px 18px 0 0",
-    textAlign: "right"
+    fontWeight: 300,
+    padding: "10px 0 7px 0",
+    textAlign: "center"
   },
 };
 

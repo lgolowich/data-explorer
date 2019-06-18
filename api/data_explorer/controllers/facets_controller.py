@@ -43,8 +43,7 @@ def _process_extra_facets(extra_facets):
             time_series_vals = []
             es_field_names = [es_base_field_name]
 
-        interval = elasticsearch_util.get_bucket_interval(
-            es, es_base_field_name, time_series_vals)
+        interval = -1
         for es_field_name in es_field_names:
             field_type = elasticsearch_util.get_field_type(es, es_field_name)
             ui_facet_name = es_base_field_name.split('.')[-1]
@@ -59,6 +58,10 @@ def _process_extra_facets(extra_facets):
             facets[es_field_name][
                 'description'] = elasticsearch_util.get_field_description(
                     es, es_base_field_name)
+
+            if field_type != 'text' and field_type != 'boolean' and interval < 0:
+                interval = elasticsearch_util.get_bucket_interval(
+                    es, es_base_field_name, time_series_vals)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
                     es, es_field_name, field_type, interval)

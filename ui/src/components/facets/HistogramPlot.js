@@ -18,62 +18,6 @@ const styles = {
 // If more than 120px, facet value name will be cut off with "..."
 const facetValueNameWidthLimit = 120;
 
-const baseVegaLiteSpec = {
-  $schema: "https://vega.github.io/schema/vega-lite/v3.json",
-  config: {
-    // Config that applies to both axes go here
-    axis: {
-      domainColor: colors.gray[4],
-      gridColor: colors.gray[6],
-      labelColor: colors.gray[0],
-      labelFont: "Montserrat",
-      labelFontWeight: 500,
-      labelPadding: 9,
-      ticks: false
-    }
-  },
-  encoding: {
-    color: {
-      field: "dimmed",
-      type: "nominal",
-      scale: {
-        range: [
-          // Default bar color
-          colors.blue[2],
-          // Unselected bar
-          colors.blue[5]
-        ]
-      },
-      legend: null
-    },
-    tooltip: {
-      field: "text",
-      type: "nominal"
-    },
-    x: {},
-    y: {},
-    // opacity is needed for creating transparent bars.
-    opacity: {
-      field: "opaque",
-      type: "nominal",
-      scale: {
-        range: [0, 1]
-      },
-      legend: null
-    }
-  },
-  mark: {
-    type: "bar",
-    cursor: "pointer"
-  },
-  padding: {
-    left: 0,
-    top: 17,
-    right: 0,
-    bottom: 16
-  }
-};
-
 const facetValueCountAxis = {
   axis: {
     labelFontSize: 10
@@ -96,17 +40,20 @@ function isCategorical(es_field_type) {
 // https://i.imgur.com/I5A6EUn.png
 // This method increases chart width in those cases:
 // https://i.imgur.com/JSKHSkS.png
-function setWidth(facetValueNames, isTimeSeries) {
-  const defaultChartWidth = (isTimeSeries ? 75 : 200);
-
-  const context = canvas(1, 1).getContext("2d");
-  const nameWidths = facetValueNames.map(n => context.measureText(n).width);
-  const maxNameWidth_currentFacet = Math.max(...nameWidths);
-  if (maxNameWidth_currentFacet > facetValueNameWidthLimit) {
-    baseVegaLiteSpec.width = defaultChartWidth;
+function setWidth(facetValueNames, isTimeSeries, baseVegaLiteSpec) {
+  if (isTimeSeries) {
+    baseVegaLiteSpec.width = 60;
   } else {
-    baseVegaLiteSpec.width =
-      defaultChartWidth + facetValueNameWidthLimit - maxNameWidth_currentFacet;
+    const defaultChartWidth = 200;
+    const context = canvas(1, 1).getContext("2d");
+    const nameWidths = facetValueNames.map(n => context.measureText(n).width);
+    const maxNameWidth_currentFacet = Math.max(...nameWidths);
+    if (maxNameWidth_currentFacet > facetValueNameWidthLimit) {
+      baseVegaLiteSpec.width = defaultChartWidth;
+    } else {
+      baseVegaLiteSpec.width =
+	defaultChartWidth + facetValueNameWidthLimit - maxNameWidth_currentFacet;
+    }
   }
 }
 
@@ -127,8 +74,68 @@ class HistogramPlot extends Component {
   render() {
     const { classes } = this.props;
 
+    const baseVegaLiteSpec = {
+      $schema: "https://vega.github.io/schema/vega-lite/v3.json",
+      config: {
+	// Config that applies to both axes go here
+	axis: {
+	  domainColor: colors.gray[4],
+	  gridColor: colors.gray[6],
+	  labelColor: colors.gray[0],
+	  labelFont: "Montserrat",
+	  labelFontWeight: 500,
+	  labelPadding: 9,
+	  ticks: false
+	}
+      },
+      encoding: {
+	color: {
+	  field: "dimmed",
+	  type: "nominal",
+	  scale: {
+            range: [
+              // Default bar color
+              colors.blue[2],
+              // Unselected bar
+              colors.blue[5]
+            ]
+	  },
+	  legend: null
+	},
+	tooltip: {
+	  field: "text",
+	  type: "nominal"
+	},
+	x: {},
+	y: {},
+	// opacity is needed for creating transparent bars.
+	opacity: {
+	  field: "opaque",
+	  type: "nominal",
+	  scale: {
+            range: [0, 1]
+	  },
+	  legend: null
+	}
+      },
+      mark: {
+	type: "bar",
+	cursor: "pointer"
+      },
+      padding: {
+	left: 0,
+	top: 17,
+	right: 0,
+	bottom: 16
+      }
+    };
+
     let facetValueNames = this.props.values.map(v => v.name);
-    setWidth(facetValueNames, this.props.isTimeSeries);
+    setWidth(facetValueNames, this.props.isTimeSeries, baseVegaLiteSpec);
+
+    let hasLabels = ("labels" in this.props ? this.props.labels : true);
+    baseVegaLiteSpec.config.axis.labels = hasLabels;
+    baseVegaLiteSpec.padding.left = (hasLabels ? 0 : -25);
 
     const vegaLiteSpec = Object.assign({}, baseVegaLiteSpec);
     if (!isCategorical(this.props.es_field_type)) {

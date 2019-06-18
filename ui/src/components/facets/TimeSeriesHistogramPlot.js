@@ -74,6 +74,7 @@ class TimeSeriesHistogramPlot extends Component {
 	        maxFacetValue={maxFacetValue}
 	        updateFacets={this.props.updateFacets}
 	        isTimeSeries={true}
+	        labels={(ti == 0)}
 	      />
 	    </div>
 	  </Grid>
