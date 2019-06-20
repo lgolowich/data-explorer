@@ -241,7 +241,6 @@ class TimeSeriesHistogramPlot extends Component {
     // Ignore clicks which are not located on histogram
     // bars.
     if (item && item.datum && item.datum.facet_value) {
-      console.log(item)
       let tsv_es_field_name = (this.props.facet.es_field_name + "." +
 			       item.datum.time_series_value);
       let selectedValues = this.props.selectedFacetValues.get(tsv_es_field_name);
