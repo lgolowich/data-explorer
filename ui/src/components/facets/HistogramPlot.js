@@ -18,16 +18,6 @@ const styles = {
 // If more than 120px, facet value name will be cut off with "..."
 const facetValueNameWidthLimit = 120;
 
-const facetValueCountAxis = {
-  axis: {
-    labelFontSize: 10
-  },
-  field: "count",
-  type: "quantitative",
-  title: "",
-  stack: null
-};
-
 function isCategorical(es_field_type) {
   return (
     es_field_type === "text" || es_field_type === "samples_overview"
@@ -133,9 +123,8 @@ class HistogramPlot extends Component {
     let facetValueNames = this.props.values.map(v => v.name);
     setWidth(facetValueNames, this.props.isTimeSeries, baseVegaLiteSpec);
 
-    let hasLabels = ("labels" in this.props ? this.props.labels : true);
-    baseVegaLiteSpec.config.axis.labels = hasLabels;
-    baseVegaLiteSpec.padding.left = (hasLabels ? 0 : -25);
+    let hasNameLabels = ("labels" in this.props ? this.props.labels : true);
+    let hasCountLabels = !this.props.isTimeSeries;
 
     const vegaLiteSpec = Object.assign({}, baseVegaLiteSpec);
     if (!isCategorical(this.props.es_field_type)) {
@@ -145,22 +134,35 @@ class HistogramPlot extends Component {
     const facetValueNameAxis = {
       field: "facet_value",
       type: "nominal",
-      title: null,
+      title: (this.props.isTimeSeries && hasNameLabels ? this.props.axisName : null),
       sort: facetValueNames,
       axis: {
+	labels: hasNameLabels,
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit
       },
       scale: {
-        // Bar height (18px) + whitespace height (13px) = 31px
-        rangeStep: 31,
-        // Proportion of step that is whitespace; 13/31 = .42
-        paddingInner: 0.42,
-        // There should be 7 pixels of whitespace under bottom bar
-        //. 7/31/2 ~= .12
-        paddingOuter: 0.12
+        // Bar height (15px) + whitespace height (10px) = 25px
+        rangeStep: 25,
+        // Proportion of step that is whitespace; 10/25 = .4
+        paddingInner: 0.4,
+        // There should be 5 pixels of whitespace under bottom bar
+        //. 5/25/2 ~= .1
+        paddingOuter: 0.1
       }
     };
+
+    const facetValueCountAxis = {
+      axis: {
+	labels: hasCountLabels,
+	labelFontSize: 10
+      },
+      field: "count",
+      type: "quantitative",
+      title: "",
+      stack: null
+    };
+
     // Make bars horizontal, to allow for more space for facet value names for
     // categorical facets.
     vegaLiteSpec.encoding.x = facetValueCountAxis;

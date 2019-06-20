@@ -60,11 +60,6 @@ class TimeSeriesHistogramPlot extends Component {
       gridItems.push(
 	<div className={classes.gridItem} key={this.props.facet.time_names[ti]}>
 	  <Grid item>
-	    <TimeSeriesPlotHeader
-	      name={this.props.facet.time_names[ti]}
-	      values={values}
- 	      selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
-	    />
 	    <div className={classes.histogramPlot}>
 	      <HistogramPlot
 	        es_field_name={tsv_es_field_name}
@@ -75,8 +70,14 @@ class TimeSeriesHistogramPlot extends Component {
 	        updateFacets={this.props.updateFacets}
 	        isTimeSeries={true}
 	        labels={(ti == 0)}
+	        axisName={this.props.facet.name}
 	      />
 	    </div>
+	    <TimeSeriesPlotHeader
+	      name={this.props.facet.time_names[ti]}
+	      values={values}
+ 	      selectedValues={this.props.selectedFacetValues.get(tsv_es_field_name)}
+	    />
 	  </Grid>
 	</div>
       );

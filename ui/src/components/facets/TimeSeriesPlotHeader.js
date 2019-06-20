@@ -13,13 +13,13 @@ const styles = {
     fontSize: 14,
     fontWeight: 600,
     textAlign: "center",
-    padding: "10px 0 7px 0"
+    padding: "10px 0 10px 0"
   },
   totalFacetValueCount: {
     color: colors.gray[1],
     fontSize: 14,
     fontWeight: 300,
-    padding: "10px 0 7px 0",
+    padding: "5px 0 10px 0",
     textAlign: "center"
   },
 };
@@ -39,14 +39,19 @@ class TimeSeriesPlotHeader extends Component {
     return (
       <div className={classes.plotHeader}>
         <div className={classes.plotName}>{this.props.name}</div>
-        <div className={classes.totalFacetValueCount}>
-          {this.sumFacetValueCounts(
-            this.props.values,
-            this.props.selectedValues
-          )}
-        </div>
       </div>
     );
+    // return (
+    //   <div className={classes.plotHeader}>
+    //     <div className={classes.plotName}>{this.props.name}</div>
+    //     <div className={classes.totalFacetValueCount}>
+    //       {this.sumFacetValueCounts(
+    //         this.props.values,
+    //         this.props.selectedValues
+    //       )}
+    //     </div>
+    //   </div>
+    // );
   }
 
   /**
