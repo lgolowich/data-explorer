@@ -42,6 +42,7 @@ class TimeSeriesFacet extends Component {
 	    handleRemoveFacet={this.props.handleRemoveFacet}
 	    isExtraFacet={this.props.isExtraFacet}
 	    selectedFacetValues={this.props.selectedFacetValues}
+	    timeSeriesUnit={this.props.timeSeriesUnit}
 	  />
         )}
       </div>

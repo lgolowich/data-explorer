@@ -106,10 +106,15 @@ definitions:
       search_placeholder_text:
         type: "string"
         description: "Optional. What to show in the search box by default"
+      time_series_unit:
+        type: "string"
+        description: "Optional. The unit of time (such as month, year, etc.) with\
+          \ which to label the time axis.\n"
     description: "Dataset information."
     example:
       search_placeholder_text: "search_placeholder_text"
       name: "name"
+      time_series_unit: "time_series_unit"
   FacetsResponse:
     properties:
       facets:

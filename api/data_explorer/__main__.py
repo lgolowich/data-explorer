@@ -145,6 +145,8 @@ def _process_ui():
     if config.get('search_placeholder_text'):
         app.app.config['SEARCH_PLACEHOLDER_TEXT'] = config.get(
             'search_placeholder_text')
+    if config.get('time_series_unit'):
+        app.app.config['TIME_SERIES_UNIT'] = config.get('time_series_unit')
 
 
 def _process_bigquery():

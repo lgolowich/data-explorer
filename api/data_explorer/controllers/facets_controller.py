@@ -177,7 +177,8 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
             # information for the value names (by name if the name is
             # numeric, or by count if it is text/boolean).
             if facet_info.get('is_time_series'):
-                if facet_info.get('type') == 'text' or facet_info.get('type') == 'boolean':
+                if facet_info.get('type') == 'text' or facet_info.get(
+                        'type') == 'boolean':
                     if interval_name in ts_value_names:
                         # Subtract to show highest count first.
                         ts_value_names[interval_name] -= count

@@ -118,7 +118,12 @@ class TimeSeriesHistogramPlot extends Component {
       sort: facetValueNames,
       axis: {
         labelFontSize: 12,
-        labelLimit: facetValueNameWidthLimit
+        labelLimit: facetValueNameWidthLimit,
+	titleColor: colors.gray[0],
+	titleFont: "Montserrat",
+	titleFontWeight: 500,
+	titleFontSize: 14,
+	titlePadding: 20,
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
@@ -142,10 +147,23 @@ class TimeSeriesHistogramPlot extends Component {
     };
 
     const facetValueTimeAxis = {
-      // TODO: add styling here
       field: "time_series_value",
       type: "ordinal",
-      title: "Time" // TODO: add name specified in ui.json
+      title: this.props.timeSeriesUnit,
+      header: {
+	labelColor: colors.gray[0],
+	labelFont: "Montserrat",
+	labelFontWeight: 500,
+	labelFontSize: 14,
+	labelPadding: 12,
+	labelOrient: "bottom",
+	titleColor: colors.gray[0],
+	titleFont: "Montserrat",
+	titleFontWeight: 500,
+	titleFontSize: 14,
+	titlePadding: 8,
+	titleOrient: "bottom"
+      }
     }
 
     // Make bars horizontal, to allow for more space for facet value names for

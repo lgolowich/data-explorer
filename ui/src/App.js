@@ -83,6 +83,8 @@ class App extends Component {
       // What to show in search box by default. If this is the empty string, the
       // react-select default of "Select..." is shown.
       searchPlaceholderText: "",
+      // Default label for time axis in time series plots.
+      timeSeriesUnit: "Time",
       // Map from es_field_name to facet data returned from API server /facets call.
       facets: new Map(),
       totalCount: null,
@@ -201,6 +203,7 @@ class App extends Component {
               facets={Array.from(this.state.facets.values())}
               handleRemoveFacet={this.handleRemoveFacet}
               extraFacetEsFieldNames={this.state.extraFacetEsFieldNames}
+	      timeSeriesUnit={this.state.timeSeriesUnit}
             />
             {this.state.datasetName === "1000 Genomes"
               ? Disclaimer(classes)
@@ -229,7 +232,8 @@ class App extends Component {
       } else {
         this.setState({
           datasetName: data.name,
-          searchPlaceholderText: data.search_placeholder_text
+          searchPlaceholderText: data.search_placeholder_text,
+	  timeSeriesUnit: data.time_series_unit
         });
       }
     }.bind(this);

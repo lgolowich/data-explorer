@@ -35,6 +35,7 @@ function FacetsGrid(props) {
             facet.es_field_name
           )}
           selectedFacetValues={props.selectedFacetValues}
+	  timeSeriesUnit={props.timeSeriesUnit}
         />
       );
     } else {

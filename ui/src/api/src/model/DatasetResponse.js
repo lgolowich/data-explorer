@@ -63,6 +63,9 @@ export default class DatasetResponse {
             if (data.hasOwnProperty('search_placeholder_text')) {
                 obj['search_placeholder_text'] = ApiClient.convertToType(data['search_placeholder_text'], 'String');
             }
+            if (data.hasOwnProperty('time_series_unit')) {
+                obj['time_series_unit'] = ApiClient.convertToType(data['time_series_unit'], 'String');
+            }
         }
         return obj;
     }
@@ -76,6 +79,11 @@ export default class DatasetResponse {
     * @member {String} search_placeholder_text
     */
     search_placeholder_text = undefined;
+    /**
+    * Optional. The unit of time (such as month, year, etc.) with which to label the time axis. 
+    * @member {String} time_series_unit
+    */
+    time_series_unit = undefined;
 
 
 
