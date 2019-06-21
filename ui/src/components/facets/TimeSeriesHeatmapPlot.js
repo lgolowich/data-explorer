@@ -84,8 +84,9 @@ class TimeSeriesHeatmapPlot extends Component {
 	// opacity is needed for creating transparent bars.
 	opacity: {
 	  field: "opaque",
-	  type: "nominal",
+	  type: "ordinal",
 	  scale: {
+	    domain: [0, .1, 1],
             range: [0, 1]
 	  },
 	  legend: null
@@ -181,25 +182,13 @@ class TimeSeriesHeatmapPlot extends Component {
 	  facet_value: name,
 	  count: count,
 	  time_series_value: time,
-	  dimmed: this.isValueDimmed(name, this.props.facet.es_field_name + "." + time),
 	  text_name: `${name}`,
 	  text_count: `${count}`,
-	  opaque: true
+	  opaque: (this.isValueDimmed(name, this.props.facet.es_field_name + "." + time)
+		   ? .1 : 1),
 	});
       }
     }
-
-    // Create transparent bar that extends the entire length of the chart. This
-    // makes tooltip/selection easier for facet values that have very low count.
-    let maxFacetValue = maxCount(this.props.facet.time_series_value_counts);
-    data.values = data.values.concat(
-      data.values.map(v => {
-        const invisible = Object.assign({}, v);
-        invisible.opaque = false;
-        invisible.count = maxFacetValue;
-        return invisible;
-      })
-    );
 
     // vega-lite spec is easier to construct than vega spec. But certain
     // properties aren't available in vega-lite spec (vega-lite is a subset of
