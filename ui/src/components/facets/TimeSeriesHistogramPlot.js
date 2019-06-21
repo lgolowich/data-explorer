@@ -123,7 +123,7 @@ class TimeSeriesHistogramPlot extends Component {
 	titleFont: "Montserrat",
 	titleFontWeight: 500,
 	titleFontSize: 14,
-	titlePadding: 20,
+	titlePadding: 20
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
@@ -164,7 +164,7 @@ class TimeSeriesHistogramPlot extends Component {
 	titlePadding: 8,
 	titleOrient: "bottom"
       }
-    }
+    };
 
     // Make bars horizontal, to allow for more space for facet value names for
     // categorical facets.
