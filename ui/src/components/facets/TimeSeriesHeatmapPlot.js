@@ -121,10 +121,6 @@ class TimeSeriesHeatmapPlot extends Component {
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit,
 	titleColor: colors.gray[0],
-	titleFont: "Montserrat",
-	titleFontWeight: 500,
-	titleFontSize: 14,
-	titlePadding: 20
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
@@ -153,7 +149,7 @@ class TimeSeriesHeatmapPlot extends Component {
       	labelColor: colors.gray[0],
       	labelFont: "Montserrat",
       	labelFontWeight: 500,
-      	labelFontSize: 14,
+      	labelFontSize: 12,
       	labelPadding: 12,
 	labelAngle: 0,
       	labelOrient: "bottom",
