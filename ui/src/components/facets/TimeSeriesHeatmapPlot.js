@@ -102,7 +102,7 @@ class TimeSeriesHeatmapPlot extends Component {
 	right: 0,
 	bottom: 16
       },
-      width: 800
+      width: 600
     };
 
     let facetValueNames = this.props.facet.value_names.slice();

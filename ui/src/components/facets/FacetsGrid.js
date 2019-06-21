@@ -53,7 +53,27 @@ function FacetsGrid(props) {
     }
   }
 
-  const facetsList = props.facets.map(facet => {
+  const sortedFacets = [];
+  for (let ti = 0, hi = 0;
+       hi < props.facets.length || ti < props.facets.length
+       ;) {
+    for (; ti < props.facets.length; ti++) {
+      if (isTimeSeries(props.facets[ti])) {
+  	sortedFacets.push(props.facets[ti]);
+	ti++;
+  	break;
+      }
+    }
+    for (; hi < props.facets.length; hi++) {
+      if (!isTimeSeries(props.facets[hi])) {
+  	sortedFacets.push(props.facets[hi]);
+	hi++;
+  	break;
+      }
+    }
+  }
+
+  const facetsList = sortedFacets.map(facet => {
     return (
       // Can't set padding the normal way because it's overridden by
       // GridListTile's built-in "style=padding:2".
@@ -61,7 +81,7 @@ function FacetsGrid(props) {
         classes={{ tile: classes.tile }}
         key={facet.name}
         style={{ padding: 0 }}
-        cols={isTimeSeries(facet) ? 3 : 1}
+        cols={isTimeSeries(facet) ? 2 : 1}
       >
 	{getFacetDefinition(facet)}
       </GridListTile>
