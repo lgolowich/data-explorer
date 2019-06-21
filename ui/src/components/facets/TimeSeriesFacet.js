@@ -37,7 +37,7 @@ class TimeSeriesFacet extends Component {
 	  isTimeSeries={true}
         />
         {this.props.facet.time_names && this.props.facet.time_names.length > 0 && (
-	  <TimeSeriesHeatmapPlot
+	  <TimeSeriesHistogramPlot
 	    facet={this.props.facet}
 	    updateFacets={this.props.updateFacets}
 	    handleRemoveFacet={this.props.handleRemoveFacet}
