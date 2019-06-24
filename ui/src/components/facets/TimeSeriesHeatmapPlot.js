@@ -124,7 +124,7 @@ class TimeSeriesHeatmapPlot extends Component {
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
-        rangeStep: 20,
+        rangeStep: 20
       }
     };
 
@@ -138,6 +138,9 @@ class TimeSeriesHeatmapPlot extends Component {
 	titleFont: "Montserrat",
 	titleFontSize: 10,
 	padding: 22 // has to be large enough to fit title horizontally
+      },
+      scale: {
+	scheme: "viridis"
       }
     };
 
