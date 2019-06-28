@@ -51,14 +51,11 @@ def _get_metrics(es, field_name):
 
 def _get_field_range_and_cardinality(es, field_name, time_series_vals):
     if time_series_vals:
-        total_min, total_max, total_card = _get_metrics(
-            es, "%s.%s" % (field_name, time_series_vals[0]))
-        for tsv in time_series_vals[1:]:
-            cur_min, cur_max, cur_card = _get_metrics(es, "%s.%s" %
-                                                      (field_name, tsv))
-            total_min = min(total_min, cur_min)
-            total_max = max(total_max, cur_max)
-            total_card = max(total_card, cur_card)
+        all_metrics = [_get_metrics(es, "%s.%s" % (field_name, tsv))
+                       for tsv in time_series_vals]
+        total_min = min(m[0] for m in all_metrics if m[0] != None)
+        total_max = max(m[1] for m in all_metrics)
+        total_card = max(m[2] for m in all_metrics)
     else:
         total_min, total_max, total_card = _get_metrics(es, field_name)
     if total_max:
