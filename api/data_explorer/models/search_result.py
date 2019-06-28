@@ -19,7 +19,8 @@ class SearchResult(Model):
                  facet_name=None,
                  facet_description=None,
                  elasticsearch_field_name=None,
-                 facet_value=None):  # noqa: E501
+                 facet_value=None,
+                 is_time_series=None):  # noqa: E501
         """SearchResult - a model defined in Swagger
 
         :param facet_name: The facet_name of this SearchResult.  # noqa: E501
@@ -30,25 +31,30 @@ class SearchResult(Model):
         :type elasticsearch_field_name: str
         :param facet_value: The facet_value of this SearchResult.  # noqa: E501
         :type facet_value: str
+        :param is_time_series: The is_time_series of this SearchResult.  # noqa: E501
+        :type is_time_series: int
         """
         self.swagger_types = {
             'facet_name': str,
             'facet_description': str,
             'elasticsearch_field_name': str,
-            'facet_value': str
+            'facet_value': str,
+            'is_time_series': int
         }
 
         self.attribute_map = {
             'facet_name': 'facet_name',
             'facet_description': 'facet_description',
             'elasticsearch_field_name': 'elasticsearch_field_name',
-            'facet_value': 'facet_value'
+            'facet_value': 'facet_value',
+            'is_time_series': 'is_time_series'
         }
 
         self._facet_name = facet_name
         self._facet_description = facet_description
         self._elasticsearch_field_name = elasticsearch_field_name
         self._facet_value = facet_value
+        self._is_time_series = is_time_series
 
     @classmethod
     def from_dict(cls, dikt):
@@ -152,3 +158,26 @@ class SearchResult(Model):
         """
 
         self._facet_value = facet_value
+
+    @property
+    def is_time_series(self):
+        """Gets the is_time_series of this SearchResult.
+
+        Is nonzero when facet_value is nonempty and the field is a time series field.   # noqa: E501
+
+        :return: The is_time_series of this SearchResult.
+        :rtype: int
+        """
+        return self._is_time_series
+
+    @is_time_series.setter
+    def is_time_series(self, is_time_series):
+        """Sets the is_time_series of this SearchResult.
+
+        Is nonzero when facet_value is nonempty and the field is a time series field.   # noqa: E501
+
+        :param is_time_series: The is_time_series of this SearchResult.
+        :type is_time_series: int
+        """
+
+        self._is_time_series = is_time_series

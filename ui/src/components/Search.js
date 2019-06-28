@@ -145,14 +145,28 @@ class Search extends React.Component {
       return option.label;
     }
     if (option.facetValue !== null && option.facetValue !== "") {
-      return (
-        <div>
-          <span style={{ color: "#cccfd4" }}>Add</span>
-          <span> {option.facetName} </span>
-          <span style={{ color: "#cccfd4" }}>facet and select</span>
-          <span> {option.facetValue} </span>
-        </div>
-      );
+      if (option.isTimeSeries) {
+	let fieldNameArr = option.esFieldName.split(".");
+	return (
+          <div>
+            <span style={{ color: "#cccfd4" }}>Add</span>
+            <span> {option.facetName} </span>
+            <span style={{ color: "#cccfd4" }}>facet and select</span>
+            <span> {option.facetValue} </span>
+            <span style={{ color: "#cccfd4" }}>at {this.props.timeSeriesUnit}</span>
+            <span> {fieldNameArr[fieldNameArr.length - 1]} </span>
+          </div>
+	);
+      } else {
+	return (
+          <div>
+            <span style={{ color: "#cccfd4" }}>Add</span>
+            <span> {option.facetName} </span>
+            <span style={{ color: "#cccfd4" }}>facet and select</span>
+            <span> {option.facetValue} </span>
+          </div>
+	);
+      }
     } else if (option.facetDescription != null) {
       return (
         <div>

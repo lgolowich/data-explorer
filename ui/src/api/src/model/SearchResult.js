@@ -69,6 +69,9 @@ export default class SearchResult {
             if (data.hasOwnProperty('facet_value')) {
                 obj['facet_value'] = ApiClient.convertToType(data['facet_value'], 'String');
             }
+            if (data.hasOwnProperty('is_time_series')) {
+                obj['is_time_series'] = ApiClient.convertToType(data['is_time_series'], 'Number');
+            }
         }
         return obj;
     }
@@ -93,6 +96,11 @@ export default class SearchResult {
     * @member {String} facet_value
     */
     facet_value = undefined;
+    /**
+    * Is nonzero when facet_value is nonempty and the field is a time series field. 
+    * @member {Number} is_time_series
+    */
+    is_time_series = undefined;
 
 
 
