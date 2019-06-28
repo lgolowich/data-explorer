@@ -218,3 +218,8 @@ definitions:
         description: >
           If this search result represents a facet, facet_value is the empty string.
           If this search result represents a facet and selected value, facet_value is the selected value.
+      is_time_series:
+        type: integer
+        description: >
+          Is nonzero when facet_value is nonempty and the field is a
+          time series field.
