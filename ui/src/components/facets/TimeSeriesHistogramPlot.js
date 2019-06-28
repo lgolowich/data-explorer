@@ -156,13 +156,13 @@ class TimeSeriesHistogramPlot extends Component {
 	labelFontWeight: 500,
 	labelFontSize: 14,
 	labelPadding: 12,
-	labelOrient: "bottom",
+	// labelOrient: "bottom",
 	titleColor: colors.gray[0],
 	titleFont: "Montserrat",
 	titleFontWeight: 500,
 	titleFontSize: 14,
 	titlePadding: 8,
-	titleOrient: "bottom"
+	// titleOrient: "bottom"
       }
     };
 
