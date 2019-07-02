@@ -115,12 +115,17 @@ class TimeSeriesHeatmapPlot extends Component {
     const facetValueNameAxis = {
       field: "facet_value",
       type: "nominal",
-      title: "",
+      title: this.props.facet.name,
       sort: facetValueNames,
       axis: {
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit,
 	titleColor: colors.gray[0],
+      	titleFont: "Montserrat",
+      	titleFontWeight: 500,
+      	titleFontSize: 14,
+      	titlePadding: 20,
+      	titleOrient: "bottom"
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
