@@ -115,7 +115,7 @@ class TimeSeriesHeatmapPlot extends Component {
     const facetValueNameAxis = {
       field: "facet_value",
       type: "nominal",
-      title: "",
+      title: this.props.facet.name,
       sort: facetValueNames,
       axis: {
         labelFontSize: 12,
