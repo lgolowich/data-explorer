@@ -185,6 +185,9 @@ definitions:
           2-dimensional array of facet value counts, indexed by time
           then value; indexes correspond to time_names and then
           value_names.
+      is_time_series:
+        type: integer
+        description: Nonzero if facet is time series facet.
   ExportUrlResponse:
     description: "Information for sending data to Terra"
     properties:

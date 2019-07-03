@@ -141,6 +141,7 @@ definitions:
         - 0
         - 0
         name: "name"
+        is_time_series: 5
         description: "description"
         es_field_name: "es_field_name"
         value_names:
@@ -159,6 +160,7 @@ definitions:
         - 0
         - 0
         name: "name"
+        is_time_series: 5
         description: "description"
         es_field_name: "es_field_name"
         value_names:
@@ -202,6 +204,9 @@ definitions:
           type: "array"
           items:
             type: "integer"
+      is_time_series:
+        type: "integer"
+        description: "Nonzero if facet is time series facet."
     description: "A facet. For example, the Gender facet would include the facet name\
       \ \"Gender\", as well as counts for all possible values.\n"
     example:
@@ -217,6 +222,7 @@ definitions:
       - 0
       - 0
       name: "name"
+      is_time_series: 5
       description: "description"
       es_field_name: "es_field_name"
       value_names:

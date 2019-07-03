@@ -150,8 +150,9 @@ def search_get(query=None):
                 search_results.append(
                     SearchResult(
                         elasticsearch_field_name=es_field_name,
-                        facet_name=(es_field_name.split('.')[-2] if is_time_series
-                                    else es_field_name.split('.')[-1]),
+                        facet_name=(es_field_name.split('.')[-2]
+                                    if is_time_series else
+                                    es_field_name.split('.')[-1]),
                         facet_value=facet_value,
                         is_time_series=is_time_series))
 
