@@ -23,7 +23,8 @@ class Facet(Model):
                  value_names=None,
                  value_counts=None,
                  time_names=None,
-                 time_series_value_counts=None):  # noqa: E501
+                 time_series_value_counts=None,
+                 is_time_series=None):  # noqa: E501
         """Facet - a model defined in Swagger
 
         :param name: The name of this Facet.  # noqa: E501
@@ -42,6 +43,8 @@ class Facet(Model):
         :type time_names: List[int]
         :param time_series_value_counts: The time_series_value_counts of this Facet.  # noqa: E501
         :type time_series_value_counts: List[List[int]]
+        :param is_time_series: The is_time_series of this Facet.  # noqa: E501
+        :type is_time_series: int
         """
         self.swagger_types = {
             'name': str,
@@ -51,7 +54,8 @@ class Facet(Model):
             'value_names': List[str],
             'value_counts': List[int],
             'time_names': List[int],
-            'time_series_value_counts': List[List[int]]
+            'time_series_value_counts': List[List[int]],
+            'is_time_series': int
         }
 
         self.attribute_map = {
@@ -62,7 +66,8 @@ class Facet(Model):
             'value_names': 'value_names',
             'value_counts': 'value_counts',
             'time_names': 'time_names',
-            'time_series_value_counts': 'time_series_value_counts'
+            'time_series_value_counts': 'time_series_value_counts',
+            'is_time_series': 'is_time_series'
         }
 
         self._name = name
@@ -73,6 +78,7 @@ class Facet(Model):
         self._value_counts = value_counts
         self._time_names = time_names
         self._time_series_value_counts = time_series_value_counts
+        self._is_time_series = is_time_series
 
     @classmethod
     def from_dict(cls, dikt):
@@ -268,3 +274,26 @@ class Facet(Model):
         """
 
         self._time_series_value_counts = time_series_value_counts
+
+    @property
+    def is_time_series(self):
+        """Gets the is_time_series of this Facet.
+
+        Nonzero if facet is time series facet.  # noqa: E501
+
+        :return: The is_time_series of this Facet.
+        :rtype: int
+        """
+        return self._is_time_series
+
+    @is_time_series.setter
+    def is_time_series(self, is_time_series):
+        """Sets the is_time_series of this Facet.
+
+        Nonzero if facet is time series facet.  # noqa: E501
+
+        :param is_time_series: The is_time_series of this Facet.
+        :type is_time_series: int
+        """
+
+        self._is_time_series = is_time_series

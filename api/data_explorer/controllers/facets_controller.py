@@ -146,7 +146,8 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                     value_names=value_names,
                     value_counts=[],
                     time_names=ts_time_names,
-                    time_series_value_counts=time_series_value_counts))
+                    time_series_value_counts=time_series_value_counts,
+                    is_time_series=1))
             ts_field_name = ""
             ts_time_names = []
             ts_value_names = {}
@@ -192,8 +193,9 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
             ts_ui_name = facet_info.get('ui_facet_name')
             ts_description = facet_info.get('description')
             ts_field_type = facet_info.get('type')
-            ts_time_names.append(int(es_field_name.split('.')[-1]))
-            ts_values.append([value_names, value_counts])
+            if not all(count == 0 for count in value_counts):
+                ts_time_names.append(int(es_field_name.split('.')[-1]))
+                ts_values.append([value_names, value_counts])
         else:
             facets.append(
                 Facet(
@@ -204,7 +206,8 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                     value_names=value_names,
                     value_counts=value_counts,
                     time_names=[],
-                    time_series_value_counts=[]))
+                    time_series_value_counts=[],
+                    is_time_series=0))
 
     if ts_field_name:
         # Finish up last time series facet if necessary
@@ -219,7 +222,8 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 value_names=value_names,
                 value_counts=[],
                 time_names=ts_time_names,
-                time_series_value_counts=time_series_value_counts))
+                time_series_value_counts=time_series_value_counts,
+                is_time_series=1))
         ts_field_name = ""
         ts_time_names = []
         ts_value_names = {}
