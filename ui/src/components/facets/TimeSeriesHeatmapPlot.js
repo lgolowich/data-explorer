@@ -35,6 +35,11 @@ function maxCount(arr) {
   return Math.max.apply(null, maxRow);
 }
 
+function minCount(arr) {
+  let minRow = arr.map(function(row){ return Math.min.apply(Math, row); });
+  return Math.min.apply(null, minRow);
+}
+
 class TimeSeriesHeatmapPlot extends Component {
   constructor(props) {
     super(props);
@@ -192,6 +197,21 @@ class TimeSeriesHeatmapPlot extends Component {
 		   ? .1 : 1),
 	});
       }
+    }
+
+    let maxFacetValue = maxCount(this.props.facet.time_series_value_counts);
+    let minFacetValue = minCount(this.props.facet.time_series_value_counts);
+    if (maxFacetValue === minFacetValue) {
+      // Create transparent marks with count 0, as the heatmap color
+      // scale only works with at least two distinct possible values.
+      data.values = data.values.concat(
+	data.values.map(v => {
+          const invisible = Object.assign({}, v);
+          invisible.opaque = 0;
+	  invisible.count = 0;
+          return invisible;
+	})
+      );
     }
 
     // vega-lite spec is easier to construct than vega spec. But certain
