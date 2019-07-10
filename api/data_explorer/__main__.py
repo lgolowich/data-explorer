@@ -166,12 +166,14 @@ def _process_bigquery():
         participant_id_column = bigquery_config['participant_id_column']
         sample_id_column = bigquery_config.get('sample_id_column', '')
         sample_file_columns = bigquery_config.get('sample_file_columns', {})
+        time_series_column = bigquery_config.get('time_series_column', '')
         table_names.sort()
 
     app.app.config['TABLES'] = table_names
     app.app.config['PARTICIPANT_ID_COLUMN'] = participant_id_column
     app.app.config['SAMPLE_ID_COLUMN'] = sample_id_column
     app.app.config['SAMPLE_FILE_COLUMNS'] = sample_file_columns
+    app.app.config['TIME_SERIES_COLUMN'] = time_series_column
 
 
 def _process_facets(es):
