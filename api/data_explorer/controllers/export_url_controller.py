@@ -12,6 +12,7 @@ import urllib
 from collections import OrderedDict
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
+from elasticsearch_dsl import HistogramFacet
 from flask import request
 from flask import current_app
 from werkzeug.exceptions import BadRequest
@@ -175,7 +176,7 @@ def _create_signed_url(gcs_path):
     return signed_url
 
 
-def _get_range_clause(column, value):
+def _get_range_clause(column, value, bucket_interval):
     arr = value.split('-')
     if len(arr) > 1:
         low = arr[0]
@@ -183,15 +184,14 @@ def _get_range_clause(column, value):
     else:
         return column + " = " + value
     if low.endswith('M'):
-        low = int(low[:-1])
-        high = int(high[:-1])
-        low = low * 1000000
-        high = high * 1000000
+        low = int(low[:-1]) * 1000000
+        high = low + bucket_interval
     elif low.endswith('B'):
-        low = int(low[:-1])
-        high = int(high[:-1])
-        low = low * 1000000000
-        high = high * 1000000000
+        low = int(low[:-1]) * 1000000000
+        high = low + bucket_interval
+    elif '.' not in low:
+        low = int(low)
+        high = low + bucket_interval
 
     # low is inclusive, high is exclusive
     # See https://github.com/elastic/elasticsearch-dsl-py/blob/master/elasticsearch_dsl/faceted_search.py#L125
@@ -199,7 +199,8 @@ def _get_range_clause(column, value):
 
 
 def _get_table_and_clause(es_field_name, field_type, value,
-                          sample_file_column_fields):
+                          bucket_interval, sample_file_column_fields,
+                          is_time_series, time_series_column):
     """Returns a table name and a single condition of a WHERE clause,
     eg "((age76 >= 20 AND age76 < 30) OR (age76 >= 30 AND age76 < 40))".
     """
@@ -216,19 +217,41 @@ def _get_table_and_clause(es_field_name, field_type, value,
         if stripped in sample_file_column_fields:
             es_field_name = sample_file_column_fields[stripped]
             sample_file_type_field = True
-    table_name, column = es_field_name.rsplit('.', 1)
-    if sample_file_type_field:
-        if value == True:
-            clause = '%s IS NOT NULL' % column
+    if is_time_series:
+        table_name, column, tsv = es_field_name.rsplit('.', 2)
+        assert not sample_file_type_field
+        if field_type == 'text':
+            clause = '%s = "%s" AND %s = %s' % (column, value,
+                                                time_series_column, tsv)
+        elif field_type == 'boolean':
+            clause = '%s = %s AND %s = %s' % (column, value,
+                                              time_series_column, tsv)
         else:
-            clause = '%s IS NULL' % column
-    elif field_type == 'text':
-        clause = '%s = "%s"' % (column, value)
-    elif field_type == 'boolean':
-        clause = '%s = %s' % (column, value)
+            clause = '%s AND %s = %s' % (_get_range_clause(column, value, bucket_interval),
+                                         time_series_column, tsv)
     else:
-        clause = _get_range_clause(column, value)
+        table_name, column = es_field_name.rsplit('.', 1)
+        if sample_file_type_field:
+            if value == True:
+                clause = '%s IS NOT NULL' % column
+            else:
+                clause = '%s IS NULL' % column
+        elif field_type == 'text':
+            clause = '%s = "%s"' % (column, value)
+        elif field_type == 'boolean':
+            clause = '%s = %s' % (column, value)
+        else:
+            clause = _get_range_clause(column, value, bucket_interval)
     return table_name, column, clause
+
+
+def _get_bucket_interval(facet):
+    if isinstance(facet, HistogramFacet):
+        return facet._params['interval']
+    elif hasattr(facet, '_inner'):
+        return _get_bucket_interval(facet._inner)
+    else:
+        return None
 
 
 def _get_sql_query(filters):
@@ -237,6 +260,7 @@ def _get_sql_query(filters):
         k.lower().replace(" ", "_"): v
         for k, v in current_app.config['SAMPLE_FILE_COLUMNS'].iteritems()
     }
+    time_series_column = current_app.config['TIME_SERIES_COLUMN']
 
     if not filters or not len(filters):
         # TODO: _get_sql_query() assumes that all tables have all participant
@@ -259,13 +283,24 @@ def _get_sql_query(filters):
         facet_id = splits[0]
         value = splits[1]
         field_type = ''
+        is_time_series = False
+        bucket_interval = None
         if facet_id in current_app.config['FACET_INFO']:
             field_type = current_app.config['FACET_INFO'][facet_id]['type']
+            is_time_series = current_app.config['FACET_INFO'][facet_id].get(
+                'is_time_series', False)
+            bucket_interval = _get_bucket_interval(current_app.config[
+                'FACET_INFO'][facet_id]['es_facet'])
         elif facet_id in current_app.config['EXTRA_FACET_INFO']:
             field_type = current_app.config['EXTRA_FACET_INFO'][facet_id][
                 'type']
+            is_time_series = current_app.config['EXTRA_FACET_INFO'][facet_id].get(
+                'is_time_series', False)
+            bucket_interval = _get_bucket_interval(current_app.config[
+                'EXTRA_FACET_INFO'][facet_id]['es_facet'])
         table_name, column, clause = _get_table_and_clause(
-            facet_id, field_type, value, sample_file_column_fields)
+            facet_id, field_type, value, bucket_interval,
+            sample_file_column_fields, is_time_series, time_series_column)
 
         if facet_id not in facet_table_clauses:
             facet_table_clauses[facet_id] = {}
@@ -316,17 +351,19 @@ def _get_sql_query(filters):
                 query = _append_to_query(query, table, join, table_num)
                 table_num += 1
 
-    # Coalesce all where clauses for facet's which span a single table into
-    # one select per table.
+    # Coalesce all where clauses for facets that span a single table
+    # using INTERSECT DISTINCT. Cannot just use one WHERE clause with
+    # AND's because multiple rows may have the same participant id for
+    # time series data.
     for table_name, wheres in table_wheres.iteritems():
-        where_clause = ''
+        intersect_clause = ''
         for where in wheres:
-            if len(where_clause) > 0:
-                where_clause += ' AND '
-            where_clause += ' (%s)' % where
+            if len(intersect_clause) > 0:
+                intersect_clause += ' INTERSECT DISTINCT '
+            intersect_clause += table_select % (participant_id_column,
+                                                table_name, where)
 
-        select = table_select % (participant_id_column, table_name,
-                                 where_clause)
+        select = '(%s)' % (intersect_clause)
         table = '%s t%d' % (select, table_num)
         join = ' INNER JOIN %s ON t%d.%s = t%d.%s' % (table, table_num - 1,
                                                       participant_id_column,
