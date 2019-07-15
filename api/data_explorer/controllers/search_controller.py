@@ -15,19 +15,17 @@ def _results_from_fields_index(fields):
     for field in fields['hits']['hits']:
         if "description" in field["_source"]:
             results.append(
-                SearchResult(
-                    facet_name=field["_source"]["name"],
-                    facet_description=field["_source"]["description"],
-                    elasticsearch_field_name=field["_id"],
-                    facet_value="",
-                    is_time_series=False))
+                SearchResult(facet_name=field["_source"]["name"],
+                             facet_description=field["_source"]["description"],
+                             elasticsearch_field_name=field["_id"],
+                             facet_value="",
+                             is_time_series=False))
         else:
             results.append(
-                SearchResult(
-                    facet_name=field["_source"]["name"],
-                    elasticsearch_field_name=field["_id"],
-                    facet_value="",
-                    is_time_series=False))
+                SearchResult(facet_name=field["_source"]["name"],
+                             elasticsearch_field_name=field["_id"],
+                             facet_value="",
+                             is_time_series=False))
     return results
 
 
@@ -35,7 +33,8 @@ def _results_from_main_index(fields, query_regex, time_series_stem=''):
     field_to_facet_values = dict()
     for field_name, field_value in fields.items():
         if isinstance(field_value, dict):
-            if '_is_time_series' in field_value and field_value['_is_time_series']:
+            if '_is_time_series' in field_value and field_value[
+                    '_is_time_series']:
                 ts_stem = field_name
             else:
                 ts_stem = ''
@@ -49,12 +48,12 @@ def _results_from_main_index(fields, query_regex, time_series_stem=''):
             else:
                 is_time_series = False
             if field_name in field_to_facet_values:
-                field_to_facet_values[field_name].add((field_value,
-                                                       is_time_series))
+                field_to_facet_values[field_name].add(
+                    (field_value, is_time_series))
             else:
                 field_to_facet_values[field_name] = set()
-                field_to_facet_values[field_name].add((field_value,
-                                                       is_time_series))
+                field_to_facet_values[field_name].add(
+                    (field_value, is_time_series))
     return field_to_facet_values
 
 
@@ -148,12 +147,11 @@ def search_get(query=None):
             for facet_value, is_time_series in field_to_facet_values[
                     es_field_name]:
                 search_results.append(
-                    SearchResult(
-                        elasticsearch_field_name=es_field_name,
-                        facet_name=(es_field_name.split('.')[-2]
-                                    if is_time_series else
-                                    es_field_name.split('.')[-1]),
-                        facet_value=facet_value,
-                        is_time_series=is_time_series))
+                    SearchResult(elasticsearch_field_name=es_field_name,
+                                 facet_name=(es_field_name.split('.')[-2]
+                                             if is_time_series else
+                                             es_field_name.split('.')[-1]),
+                                 facet_value=facet_value,
+                                 is_time_series=is_time_series))
 
     return SearchResponse(search_results=search_results)

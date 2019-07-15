@@ -188,8 +188,8 @@ def get_facet_value_dict(filter_arr, facets):
 
 def get_field_description(es, field_name):
     s = Search(using=es, index=current_app.config['INDEX_NAME'] + '_fields')
-    s.update_from_dict({
-        "query": {
+    s.update_from_dict(
+        {"query": {
             "bool": {
                 "must": [{
                     "match": {
@@ -197,8 +197,7 @@ def get_field_description(es, field_name):
                     }
                 }]
             }
-        }
-    })
+        }})
     hits = s.execute()['hits']['hits']
     if len(hits) == 0:
         raise ValueError(
@@ -269,8 +268,8 @@ def is_time_series(es, field_name):
 
 
 def get_time_series_vals(es, field_name, mapping):
-    submapping = mapping[current_app.config['INDEX_NAME']]['mappings']['type'][
-        'properties']
+    submapping = mapping[
+        current_app.config['INDEX_NAME']]['mappings']['type']['properties']
     for subname in field_name.split('.'):
         submapping = submapping[subname]['properties']
     time_series_vals = submapping.keys()
@@ -313,8 +312,9 @@ def get_nested_paths(es):
     nested_paths = []
     mappings = es.indices.get_mapping(index=current_app.config['INDEX_NAME'])
     nested_paths.extend(
-        _get_nested_paths_inner('', mappings[current_app.config['INDEX_NAME']][
-            'mappings']['type']['properties']))
+        _get_nested_paths_inner(
+            '', mappings[current_app.config['INDEX_NAME']]['mappings']['type']
+            ['properties']))
     return nested_paths
 
 
@@ -360,8 +360,8 @@ def get_elasticsearch_facet(es, elasticsearch_field_name, field_type,
         # TODO: When https://github.com/elastic/elasticsearch/issues/31828
         # is fixed, use AutoHistogramFacet instead. Will no longer need 2
         # steps.
-        es_facet = HistogramFacet(
-            field=elasticsearch_field_name, interval=interval)
+        es_facet = HistogramFacet(field=elasticsearch_field_name,
+                                  interval=interval)
 
     nested_facet = _maybe_get_nested_facet(elasticsearch_field_name, es_facet)
     if nested_facet:
@@ -397,8 +397,8 @@ def _delete_index(es, index):
         current_app.logger.info('Deleting %s index failed: %s' % (index, e))
         # Ignore 404: index not found
         index = es.indices.get(index=index, ignore=404)
-        current_app.logger.info('es.indices.get(index=%s): %s' % (index,
-                                                                  index))
+        current_app.logger.info('es.indices.get(index=%s): %s' %
+                                (index, index))
 
 
 def _create_index(es, index, mappings_file=None):

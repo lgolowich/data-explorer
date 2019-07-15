@@ -106,8 +106,9 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
     :rtype: FacetsResponse
     """
     _process_extra_facets(extraFacets)
-    combined_facets = OrderedDict(current_app.config['EXTRA_FACET_INFO'].items(
-    ) + current_app.config['FACET_INFO'].items())
+    combined_facets = OrderedDict(
+        current_app.config['EXTRA_FACET_INFO'].items() +
+        current_app.config['FACET_INFO'].items())
     search = DatasetFacetedSearch(
         elasticsearch_util.get_facet_value_dict(filter, combined_facets),
         combined_facets)
@@ -138,16 +139,15 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
             value_names, time_series_value_counts = _get_time_series_params(
                 ts_value_names, ts_values)
             facets.append(
-                Facet(
-                    name=ts_ui_name,
-                    description=ts_description,
-                    es_field_name=ts_field_name,
-                    es_field_type=ts_field_type,
-                    value_names=value_names,
-                    value_counts=[],
-                    time_names=ts_time_names,
-                    time_series_value_counts=time_series_value_counts,
-                    is_time_series=1))
+                Facet(name=ts_ui_name,
+                      description=ts_description,
+                      es_field_name=ts_field_name,
+                      es_field_type=ts_field_type,
+                      value_names=value_names,
+                      value_counts=[],
+                      time_names=ts_time_names,
+                      time_series_value_counts=time_series_value_counts,
+                      is_time_series=1))
             ts_field_name = ""
             ts_time_names = []
             ts_value_names = {}
@@ -198,36 +198,34 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 ts_values.append([value_names, value_counts])
         else:
             facets.append(
-                Facet(
-                    name=facet_info.get('ui_facet_name'),
-                    description=facet_info.get('description'),
-                    es_field_name=es_field_name,
-                    es_field_type=facet_info.get('type'),
-                    value_names=value_names,
-                    value_counts=value_counts,
-                    time_names=[],
-                    time_series_value_counts=[],
-                    is_time_series=0))
+                Facet(name=facet_info.get('ui_facet_name'),
+                      description=facet_info.get('description'),
+                      es_field_name=es_field_name,
+                      es_field_type=facet_info.get('type'),
+                      value_names=value_names,
+                      value_counts=value_counts,
+                      time_names=[],
+                      time_series_value_counts=[],
+                      is_time_series=0))
 
     if ts_field_name:
         # Finish up last time series facet if necessary
         value_names, time_series_value_counts = _get_time_series_params(
             ts_value_names, ts_values)
         facets.append(
-            Facet(
-                name=ts_ui_name,
-                description=ts_description,
-                es_field_name=ts_field_name,
-                es_field_type=ts_field_type,
-                value_names=value_names,
-                value_counts=[],
-                time_names=ts_time_names,
-                time_series_value_counts=time_series_value_counts,
-                is_time_series=1))
+            Facet(name=ts_ui_name,
+                  description=ts_description,
+                  es_field_name=ts_field_name,
+                  es_field_type=ts_field_type,
+                  value_names=value_names,
+                  value_counts=[],
+                  time_names=ts_time_names,
+                  time_series_value_counts=time_series_value_counts,
+                  is_time_series=1))
         ts_field_name = ""
         ts_time_names = []
         ts_value_names = {}
         ts_values = []
 
-    return FacetsResponse(
-        facets=facets, count=es_response._faceted_search.count())
+    return FacetsResponse(facets=facets,
+                          count=es_response._faceted_search.count())

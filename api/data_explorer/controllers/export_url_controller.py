@@ -83,13 +83,14 @@ def _get_doc_generator(filter_arr):
         return
 
     es = Elasticsearch(current_app.config['ELASTICSEARCH_URL'])
-    combined_facets = OrderedDict(current_app.config['EXTRA_FACET_INFO'].items(
-    ) + current_app.config['FACET_INFO'].items())
+    combined_facets = OrderedDict(
+        current_app.config['EXTRA_FACET_INFO'].items() +
+        current_app.config['FACET_INFO'].items())
     filters = elasticsearch_util.get_facet_value_dict(filter_arr,
                                                       combined_facets)
     search_dict = DatasetFacetedSearch(
-        filters, combined_facets).build_search().to_dict().get(
-            'post_filter', {})
+        filters,
+        combined_facets).build_search().to_dict().get('post_filter', {})
     search = Search(using=es, index=current_app.config['INDEX_NAME'])
     search.update_from_dict({'post_filter': search_dict})
     for result in search.scan():
@@ -105,15 +106,13 @@ def _get_entities_dict(cohort_name, query, filter_arr, data_explorer_url):
     for table_name in current_app.config['TABLES']:
         entities.append({
             # FireCloud doesn't allow spaces, so use underscore.
-            'entityType':
-            'BigQuery_table',
+            'entityType': 'BigQuery_table',
             # This is the entity ID. Ideally this would be
             # project_id.dataset_id.table_name, and we wouldn't need the
             # table_name attribute. Unfortunately RAWLS doesn't allow
             # periods here. RAWLS does allow periods in attributes. So use
             # underscores here and periods in table_name attribute.
-            'name':
-            table_name.replace('.', '_').replace(':', '_'),
+            'name': table_name.replace('.', '_').replace(':', '_'),
             'attributes': {
                 'dataset_name': current_app.config['DATASET_NAME'],
                 'table_name': table_name,
@@ -149,9 +148,9 @@ def _write_gcs_file(entities):
     entities_json = json.dumps(entities)
     blob.upload_from_string(entities_json)
 
-    current_app.logger.info('Wrote gs://%s/%s' %
-                            (current_app.config['EXPORT_URL_GCS_BUCKET'],
-                             blob.name))
+    current_app.logger.info(
+        'Wrote gs://%s/%s' %
+        (current_app.config['EXPORT_URL_GCS_BUCKET'], blob.name))
     # Return in the format that signing a URL needs.
     return '/%s/%s' % (current_app.config['EXPORT_URL_GCS_BUCKET'], blob.name)
 
@@ -160,16 +159,16 @@ def _create_signed_url(gcs_path):
     private_key_path = os.path.join(current_app.config['DATASET_CONFIG_DIR'],
                                     'private-key.json')
     creds = ServiceAccountCredentials.from_json_keyfile_name(private_key_path)
-    service_account_email = current_app.config['DEPLOY_PROJECT_ID'] + '@appspot.gserviceaccount.com'
+    service_account_email = current_app.config[
+        'DEPLOY_PROJECT_ID'] + '@appspot.gserviceaccount.com'
     # Signed URL will be valid for 5 minutes
     timestamp = str(int(time.time()) + 5 * 60)
     file_metadata = '\n'.join(['GET', '', '', timestamp, gcs_path])
     signature = base64.b64encode(creds.sign_blob(file_metadata)[1])
     signature = urllib.quote(signature, safe='')
     signed_url = ('https://storage.googleapis.com%s?GoogleAccessId=%s'
-                  '&Expires=%s&Signature=%s') % (gcs_path,
-                                                 service_account_email,
-                                                 timestamp, signature)
+                  '&Expires=%s&Signature=%s') % (
+                      gcs_path, service_account_email, timestamp, signature)
     # import-data expects url to be url encoded
     signed_url = urllib.quote(signed_url, safe='')
     current_app.logger.info('Signed URL: ' + signed_url)
@@ -198,9 +197,9 @@ def _get_range_clause(column, value, bucket_interval):
     return column + " >= " + str(low) + " AND " + column + " < " + str(high)
 
 
-def _get_table_and_clause(es_field_name, field_type, value,
-                          bucket_interval, sample_file_column_fields,
-                          is_time_series, time_series_column):
+def _get_table_and_clause(es_field_name, field_type, value, bucket_interval,
+                          sample_file_column_fields, is_time_series,
+                          time_series_column):
     """Returns a table name and a single condition of a WHERE clause,
     eg "((age76 >= 20 AND age76 < 30) OR (age76 >= 30 AND age76 < 40))".
     """
@@ -227,8 +226,8 @@ def _get_table_and_clause(es_field_name, field_type, value,
             clause = '%s = %s AND %s = %s' % (column, value,
                                               time_series_column, tsv)
         else:
-            clause = '%s AND %s = %s' % (_get_range_clause(column, value, bucket_interval),
-                                         time_series_column, tsv)
+            clause = '%s AND %s = %s' % (_get_range_clause(
+                column, value, bucket_interval), time_series_column, tsv)
     else:
         table_name, column = es_field_name.rsplit('.', 1)
         if sample_file_type_field:
@@ -289,15 +288,15 @@ def _get_sql_query(filters):
             field_type = current_app.config['FACET_INFO'][facet_id]['type']
             is_time_series = current_app.config['FACET_INFO'][facet_id].get(
                 'is_time_series', False)
-            bucket_interval = _get_bucket_interval(current_app.config[
-                'FACET_INFO'][facet_id]['es_facet'])
+            bucket_interval = _get_bucket_interval(
+                current_app.config['FACET_INFO'][facet_id]['es_facet'])
         elif facet_id in current_app.config['EXTRA_FACET_INFO']:
             field_type = current_app.config['EXTRA_FACET_INFO'][facet_id][
                 'type']
-            is_time_series = current_app.config['EXTRA_FACET_INFO'][facet_id].get(
-                'is_time_series', False)
-            bucket_interval = _get_bucket_interval(current_app.config[
-                'EXTRA_FACET_INFO'][facet_id]['es_facet'])
+            is_time_series = current_app.config['EXTRA_FACET_INFO'][
+                facet_id].get('is_time_series', False)
+            bucket_interval = _get_bucket_interval(
+                current_app.config['EXTRA_FACET_INFO'][facet_id]['es_facet'])
         table_name, column, clause = _get_table_and_clause(
             facet_id, field_type, value, bucket_interval,
             sample_file_column_fields, is_time_series, time_series_column)
@@ -365,10 +364,9 @@ def _get_sql_query(filters):
 
         select = '(%s)' % (intersect_clause)
         table = '%s t%d' % (select, table_num)
-        join = ' INNER JOIN %s ON t%d.%s = t%d.%s' % (table, table_num - 1,
-                                                      participant_id_column,
-                                                      table_num,
-                                                      participant_id_column)
+        join = ' INNER JOIN %s ON t%d.%s = t%d.%s' % (
+            table, table_num - 1, participant_id_column, table_num,
+            participant_id_column)
         query = _append_to_query(query, table, join, table_num)
         table_num += 1
 

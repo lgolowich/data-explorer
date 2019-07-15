@@ -22,16 +22,16 @@ import requests
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 
-DOC_TYPE = 'type'
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--es_url', default='http://localhost:9200', required=False)
+    parser.add_argument('--es_url',
+                        default='http://localhost:9200',
+                        required=False)
     parser.add_argument('--dataset', default='1000_genomes', required=False)
-    parser.add_argument(
-        '--output_dir', default='dataset_config/1000_genomes', required=False)
+    parser.add_argument('--output_dir',
+                        default='dataset_config/1000_genomes',
+                        required=False)
     return parser.parse_args()
 
 
@@ -46,14 +46,14 @@ def main():
 
     print 'Dumping index: %s' % index
     index_file = open(output_index_file, 'w')
-    for row in scan(client, query={}, index=index, doc_type=DOC_TYPE):
+    for row in scan(client, query={}, index=index):
         json.dump(row, index_file)
         index_file.write('\n')
     index_file.close()
 
     fields_index_file = open(output_fields_file, 'w')
     print 'Dumping index: %s' % fields_index
-    for row in scan(client, query={}, index=fields_index, doc_type=DOC_TYPE):
+    for row in scan(client, query={}, index=fields_index):
         print(row)
         json.dump(row, fields_index_file)
         fields_index_file.write('\n')
@@ -61,8 +61,8 @@ def main():
 
     print 'Dump index mappings: %s' % index
     mappings_file = open(output_mappings_file, 'w')
-    mappings = requests.get('%s/%s/_mapping/type' % (args.es_url,
-                                                     index)).json()
+    mappings = requests.get('%s/%s/_mapping/type' %
+                            (args.es_url, index)).json()
     json.dump(mappings[index], mappings_file)
     mappings_file.close()
 
