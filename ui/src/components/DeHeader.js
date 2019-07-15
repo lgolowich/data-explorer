@@ -14,9 +14,9 @@ import Search from "components/Search";
 
 const styles = {
   appBar: {
-    backgroundColor: colors.grayBlue[6],
+    backgroundColor: "#fafbfc",
     boxShadow: "unset",
-    color: colors.gray[0],
+    color: colors.dark(),
     marginTop: 3
   },
   saveButton: {
@@ -29,8 +29,8 @@ const styles = {
   },
   snackbarContentRoot: {
     alignItems: "baseline",
-    backgroundColor: colors.gray[1],
-    borderLeft: "5px solid " + colors.gray[0],
+    backgroundColor: "#525c6c",
+    borderLeft: "5px solid " + colors.dark(),
     borderRadius: 5,
     fontSize: 12,
     minWidth: 228,
@@ -57,7 +57,7 @@ const styles = {
   },
   totalCount: {
     alignItems: "center",
-    color: colors.gray[0],
+    color: colors.dark(),
     display: "flex",
     fontSize: 16,
     height: 45,
@@ -139,7 +139,7 @@ class DeHeader extends React.Component {
             selectedFacetValues={this.props.selectedFacetValues}
             facets={this.props.facets}
             loadOptions={this.props.handleSearchBoxTyping}
-	    timeSeriesUnit={this.props.timeSeriesUnit}
+            timeSeriesUnit={this.props.timeSeriesUnit}
           />
           <div className={classes.totalCount}>
             {this.props.totalCount} Participants

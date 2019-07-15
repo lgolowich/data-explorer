@@ -30,12 +30,12 @@ const styles = {
   }),
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: colors.gray[6],
+    backgroundColor: "#ebedef",
     border: 0,
     borderRadius: 5,
     ...(state.isFocused
       ? {
-          boxShadow: "0 0 0 1px " + colors.green[1]
+          boxShadow: "0 0 0 1px " + colors.success()
         }
       : {})
   }),
@@ -85,14 +85,14 @@ const styles = {
   // multiValue = Chip styling
   multiValue: (provided, state) => ({
     ...provided,
-    backgroundColor: colors.grayBlue[1],
+    backgroundColor: "#ced8e3",
     borderRadius: "15.5px",
     height: "31",
     margin: "0 15px 7px 0"
   }),
   multiValueLabel: (provided, state) => ({
     ...provided,
-    color: colors.gray[0],
+    color: colors.dark(),
     fontSize: 12,
     fontWeight: 500,
     // For some reason different line-heights are needed for Mac Chrome vs
@@ -110,7 +110,7 @@ const styles = {
     }
   }),
   multiValueRemoveIcon: {
-    color: colors.gray[3]
+    color: "#8f96a1"
   },
   placeholder: (provided, state) => ({
     ...provided,
@@ -146,26 +146,28 @@ class Search extends React.Component {
     }
     if (option.facetValue !== null && option.facetValue !== "") {
       if (option.isTimeSeries) {
-	let fieldNameArr = option.esFieldName.split(".");
-	return (
+        let fieldNameArr = option.esFieldName.split(".");
+        return (
           <div>
             <span style={{ color: "#cccfd4" }}>Add</span>
             <span> {option.facetName} </span>
             <span style={{ color: "#cccfd4" }}>facet and select</span>
             <span> {option.facetValue} </span>
-            <span style={{ color: "#cccfd4" }}>at {this.props.timeSeriesUnit}</span>
+            <span style={{ color: "#cccfd4" }}>
+              at {this.props.timeSeriesUnit}
+            </span>
             <span> {fieldNameArr[fieldNameArr.length - 1]} </span>
           </div>
-	);
+        );
       } else {
-	return (
+        return (
           <div>
             <span style={{ color: "#cccfd4" }}>Add</span>
             <span> {option.facetName} </span>
             <span style={{ color: "#cccfd4" }}>facet and select</span>
             <span> {option.facetValue} </span>
           </div>
-	);
+        );
       }
     } else if (option.facetDescription != null) {
       return (
@@ -204,10 +206,12 @@ class Search extends React.Component {
     let chips = [];
     selectedFacetValues.forEach((values, key) => {
       let keySplit = key.split(".");
-      let facetName = (this.props.facets.has(key)
-		       ? this.props.facets.get(key).name
-		       : (this.props.facets.get(keySplit.slice(0, -1).join(".")).name
-			  + " (time " + keySplit[keySplit.length - 1] + ")"));
+      let facetName = this.props.facets.has(key)
+        ? this.props.facets.get(key).name
+        : this.props.facets.get(keySplit.slice(0, -1).join(".")).name +
+          " (time " +
+          keySplit[keySplit.length - 1] +
+          ")";
       if (values.length > 0) {
         for (let value of values) {
           chips.push({

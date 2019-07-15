@@ -5,9 +5,9 @@ import * as vl from "vega-lite";
 import Vega from "react-vega";
 import { withStyles } from "@material-ui/core/styles";
 
+import colors from "libs/colors";
 import "./HistogramFacet.css";
 import * as Style from "libs/style";
-import colors from "libs/colors";
 
 const styles = {
   vega: {
@@ -19,9 +19,7 @@ const styles = {
 const facetValueNameWidthLimit = 120;
 
 function isCategorical(es_field_type) {
-  return (
-    es_field_type === "text" || es_field_type === "samples_overview"
-  );
+  return es_field_type === "text" || es_field_type === "samples_overview";
 }
 
 // Make vega chart fill up facet horizontally.
@@ -42,7 +40,9 @@ function setWidth(facetValueNames, isTimeSeries, baseVegaLiteSpec) {
       baseVegaLiteSpec.width = defaultChartWidth;
     } else {
       baseVegaLiteSpec.width =
-	defaultChartWidth + facetValueNameWidthLimit - maxNameWidth_currentFacet;
+        defaultChartWidth +
+        facetValueNameWidthLimit -
+        maxNameWidth_currentFacet;
     }
   }
 }
@@ -67,63 +67,63 @@ class HistogramPlot extends Component {
     const baseVegaLiteSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v3.json",
       config: {
-	// Config that applies to both axes go here
-	axis: {
-	  domainColor: colors.gray[4],
-	  gridColor: colors.gray[6],
-	  labelColor: colors.gray[0],
-	  labelFont: "Montserrat",
-	  labelFontWeight: 500,
-	  labelPadding: 9,
-	  ticks: false
-	}
+        // Config that applies to both axes go here
+        axis: {
+          domainColor: "#aeb3ba",
+          gridColor: "#ebedef",
+          labelColor: colors.dark(),
+          labelFont: "Montserrat",
+          labelFontWeight: 500,
+          labelPadding: 9,
+          ticks: false
+        }
       },
       encoding: {
-	color: {
-	  field: "dimmed",
-	  type: "nominal",
-	  scale: {
+        color: {
+          field: "dimmed",
+          type: "nominal",
+          scale: {
             range: [
               // Default bar color
-              colors.blue[2],
+              "#4cabd4",
               // Unselected bar
-              colors.blue[5]
+              "#bfe1f0"
             ]
-	  },
-	  legend: null
-	},
-	tooltip: {
-	  field: "text",
-	  type: "nominal"
-	},
-	x: {},
-	y: {},
-	// opacity is needed for creating transparent bars.
-	opacity: {
-	  field: "opaque",
-	  type: "nominal",
-	  scale: {
+          },
+          legend: null
+        },
+        tooltip: {
+          field: "text",
+          type: "nominal"
+        },
+        x: {},
+        y: {},
+        // opacity is needed for creating transparent bars.
+        opacity: {
+          field: "opaque",
+          type: "nominal",
+          scale: {
             range: [0, 1]
-	  },
-	  legend: null
-	}
+          },
+          legend: null
+        }
       },
       mark: {
-	type: "bar",
-	cursor: "pointer"
+        type: "bar",
+        cursor: "pointer"
       },
       padding: {
-	left: 0,
-	top: 17,
-	right: 0,
-	bottom: 16
+        left: 0,
+        top: 17,
+        right: 0,
+        bottom: 16
       }
     };
 
     let facetValueNames = this.props.values.map(v => v.name);
     setWidth(facetValueNames, this.props.isTimeSeries, baseVegaLiteSpec);
 
-    let hasNameLabels = ("labels" in this.props ? this.props.labels : true);
+    let hasNameLabels = "labels" in this.props ? this.props.labels : true;
     let hasCountLabels = !this.props.isTimeSeries;
 
     const vegaLiteSpec = Object.assign({}, baseVegaLiteSpec);
@@ -134,10 +134,11 @@ class HistogramPlot extends Component {
     const facetValueNameAxis = {
       field: "facet_value",
       type: "nominal",
-      title: (this.props.isTimeSeries && hasNameLabels ? this.props.axisName : null),
+      title:
+        this.props.isTimeSeries && hasNameLabels ? this.props.axisName : null,
       sort: facetValueNames,
       axis: {
-	labels: hasNameLabels,
+        labels: hasNameLabels,
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit
       },
@@ -154,8 +155,8 @@ class HistogramPlot extends Component {
 
     const facetValueCountAxis = {
       axis: {
-	labels: hasCountLabels,
-	labelFontSize: 10
+        labels: hasCountLabels,
+        labelFontSize: 10
       },
       field: "count",
       type: "quantitative",
@@ -182,8 +183,10 @@ class HistogramPlot extends Component {
 
     // Create transparent bar that extends the entire length of the chart. This
     // makes tooltip/selection easier for facet values that have very low count.
-    const maxFacetValue = ('maxFacetValue' in this.props ? this.props.maxFacetValue
-			   : Math.max(...data.values.map(v => v.count)));
+    const maxFacetValue =
+      "maxFacetValue" in this.props
+        ? this.props.maxFacetValue
+        : Math.max(...data.values.map(v => v.count));
     data.values = data.values.concat(
       data.values.map(v => {
         const invisible = Object.assign({}, v);
@@ -257,9 +260,7 @@ class HistogramPlot extends Component {
       />
     );
 
-    return (
-      <div className={classes.vega}> {vega} </div>
-    );
+    return <div className={classes.vega}> {vega} </div>;
   }
 
   isValueDimmed(facetValue) {
@@ -292,11 +293,7 @@ class HistogramPlot extends Component {
         isSelected = true;
       }
 
-      this.props.updateFacets(
-        this.props.es_field_name,
-        facetValue,
-        isSelected
-      );
+      this.props.updateFacets(this.props.es_field_name, facetValue, isSelected);
     }
   }
 

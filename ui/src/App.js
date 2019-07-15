@@ -23,16 +23,16 @@ import Montserrat from "libs/fonts/Montserrat-Medium.woff2";
 
 const styles = {
   disclaimer: {
-    color: colors.gray[3],
+    color: colors.dark(),
     fontSize: 14,
     padding: "15px 15px 5px 15px"
   },
   disclaimerLink: {
-    color: colors.green[0],
+    color: "#295699",
     textDecoration: "none"
   },
   root: {
-    backgroundColor: colors.grayBlue[6],
+    backgroundColor: "#fafbfc",
     // 1) overflow-x=hidden is needed to disable horizontal scrollbar.
     // Horizontal scrollbar appears because each HistogramFacet has right
     // margin, including right-most HistogramFacets.
@@ -132,7 +132,7 @@ class App extends Component {
             facetDescription: result.facet_description,
             esFieldName: result.elasticsearch_field_name,
             facetValue: result.facet_value,
-	    isTimeSeries: result.is_time_series
+            isTimeSeries: result.is_time_series
           };
         });
         this.setState({
@@ -154,7 +154,7 @@ class App extends Component {
               facetDescription: searchResult.facet_description,
               esFieldName: searchResult.elasticsearch_field_name,
               facetValue: searchResult.facet_value,
-	      isTimeSeries: searchResult.is_time_series
+              isTimeSeries: searchResult.is_time_series
             };
           });
           callback(result);
@@ -198,7 +198,7 @@ class App extends Component {
               searchResults={this.state.searchResults}
               selectedFacetValues={this.state.selectedFacetValues}
               totalCount={this.state.totalCount}
-	      timeSeriesUnit={this.state.timeSeriesUnit}
+              timeSeriesUnit={this.state.timeSeriesUnit}
             />
             <FacetsGrid
               updateFacets={this.updateFacets}
@@ -206,7 +206,7 @@ class App extends Component {
               facets={Array.from(this.state.facets.values())}
               handleRemoveFacet={this.handleRemoveFacet}
               extraFacetEsFieldNames={this.state.extraFacetEsFieldNames}
-	      timeSeriesUnit={this.state.timeSeriesUnit}
+              timeSeriesUnit={this.state.timeSeriesUnit}
             />
             {this.state.datasetName === "1000 Genomes"
               ? Disclaimer(classes)
@@ -236,7 +236,7 @@ class App extends Component {
         this.setState({
           datasetName: data.name,
           searchPlaceholderText: data.search_placeholder_text,
-	  timeSeriesUnit: data.time_series_unit
+          timeSeriesUnit: data.time_series_unit
         });
       }
     }.bind(this);
@@ -283,9 +283,12 @@ class App extends Component {
       let option = action.option;
       // Drop-down row was clicked.
       let newExtraFacetEsFieldNames = this.state.extraFacetEsFieldNames;
-      let facetEsFieldName = (option.isTimeSeries ?
-			      option.esFieldName.split(".").slice(0, -1).join(".")
-			      : option.esFieldName);
+      let facetEsFieldName = option.isTimeSeries
+        ? option.esFieldName
+            .split(".")
+            .slice(0, -1)
+            .join(".")
+        : option.esFieldName;
       newExtraFacetEsFieldNames.push(facetEsFieldName);
 
       let selectedFacetValues = this.state.selectedFacetValues;
@@ -363,9 +366,14 @@ class App extends Component {
     facetsCopy.delete(facetValue);
     let selectedFacetValues = new Map(this.state.selectedFacetValues);
     for (const facetValueKey of selectedFacetValues.keys()) {
-      if (facetValueKey === facetValue
-	  || facetValueKey.split(".").slice(0, -1).join(".") === facetValue) {
-	selectedFacetValues.delete(facetValueKey);
+      if (
+        facetValueKey === facetValue ||
+        facetValueKey
+          .split(".")
+          .slice(0, -1)
+          .join(".") === facetValue
+      ) {
+        selectedFacetValues.delete(facetValueKey);
       }
     }
     let extraFacetEsFieldNames = this.state.extraFacetEsFieldNames.filter(

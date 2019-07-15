@@ -5,9 +5,9 @@ import * as vl from "vega-lite";
 import Vega from "react-vega";
 import { withStyles } from "@material-ui/core/styles";
 
+import colors from "libs/colors";
 import "./HistogramFacet.css";
 import * as Style from "libs/style";
-import colors from "libs/colors";
 import FacetHeader from "components/facets/FacetHeader";
 
 const styles = {
@@ -24,14 +24,14 @@ const styles = {
 const facetValueNameWidthLimit = 120;
 
 function isCategorical(es_field_type) {
-  return (
-    es_field_type === "text" || es_field_type === "samples_overview"
-  );
+  return es_field_type === "text" || es_field_type === "samples_overview";
 }
 
 // From https://stackoverflow.com/questions/39342575
 function maxCount(arr) {
-  let maxRow = arr.map(function(row){ return Math.max.apply(Math, row); });
+  let maxRow = arr.map(function(row) {
+    return Math.max.apply(Math, row);
+  });
   return Math.max.apply(null, maxRow);
 }
 
@@ -49,57 +49,57 @@ class TimeSeriesHistogramPlot extends Component {
     const baseVegaLiteSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v3.json",
       config: {
-	// Config that applies to both axes go here
-	axis: {
-	  domainColor: colors.gray[4],
-	  gridColor: colors.gray[6],
-	  labelColor: colors.gray[0],
-	  labelFont: "Montserrat",
-	  labelFontWeight: 500,
-	  labelPadding: 9,
-	  ticks: false
-	}
+        // Config that applies to both axes go here
+        axis: {
+          domainColor: "#aeb3ba",
+          gridColor: "#ebedef",
+          labelColor: colors.dark(),
+          labelFont: "Montserrat",
+          labelFontWeight: 500,
+          labelPadding: 9,
+          ticks: false
+        }
       },
       encoding: {
-	color: {
-	  field: "dimmed",
-	  type: "nominal",
-	  scale: {
+        color: {
+          field: "dimmed",
+          type: "nominal",
+          scale: {
             range: [
               // Default bar color
-              colors.blue[2],
+              "#4cabd4",
               // Unselected bar
-              colors.blue[5]
+              "#bfe1f0"
             ]
-	  },
-	  legend: null
-	},
-	tooltip: {
-	  field: "text",
-	  type: "nominal"
-	},
-	x: {},
-	y: {},
-	column: {},
-	// opacity is needed for creating transparent bars.
-	opacity: {
-	  field: "opaque",
-	  type: "nominal",
-	  scale: {
+          },
+          legend: null
+        },
+        tooltip: {
+          field: "text",
+          type: "nominal"
+        },
+        x: {},
+        y: {},
+        column: {},
+        // opacity is needed for creating transparent bars.
+        opacity: {
+          field: "opaque",
+          type: "nominal",
+          scale: {
             range: [0, 1]
-	  },
-	  legend: null
-	}
+          },
+          legend: null
+        }
       },
       mark: {
-	type: "bar",
-	cursor: "pointer"
+        type: "bar",
+        cursor: "pointer"
       },
       padding: {
-	left: 0,
-	top: 17,
-	right: 0,
-	bottom: 16
+        left: 0,
+        top: 17,
+        right: 0,
+        bottom: 16
       },
       width: 60
     };
@@ -119,11 +119,11 @@ class TimeSeriesHistogramPlot extends Component {
       axis: {
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit,
-	titleColor: colors.gray[0],
-	titleFont: "Montserrat",
-	titleFontWeight: 500,
-	titleFontSize: 14,
-	titlePadding: 20
+        titleColor: colors.dark(),
+        titleFont: "Montserrat",
+        titleFontWeight: 500,
+        titleFontSize: 14,
+        titlePadding: 20
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
@@ -138,7 +138,7 @@ class TimeSeriesHistogramPlot extends Component {
 
     const facetValueCountAxis = {
       axis: {
-	labels: false
+        labels: false
       },
       field: "count",
       type: "quantitative",
@@ -151,18 +151,18 @@ class TimeSeriesHistogramPlot extends Component {
       type: "ordinal",
       title: this.props.timeSeriesUnit,
       header: {
-	labelColor: colors.gray[0],
-	labelFont: "Montserrat",
-	labelFontWeight: 500,
-	labelFontSize: 14,
-	labelPadding: 12,
-	// labelOrient: "bottom",
-	titleColor: colors.gray[0],
-	titleFont: "Montserrat",
-	titleFontWeight: 500,
-	titleFontSize: 14,
-	titlePadding: 8,
-	// titleOrient: "bottom"
+        labelColor: colors.dark(),
+        labelFont: "Montserrat",
+        labelFontWeight: 500,
+        labelFontSize: 14,
+        labelPadding: 12,
+        // labelOrient: "bottom",
+        titleColor: colors.dark(),
+        titleFont: "Montserrat",
+        titleFontWeight: 500,
+        titleFontSize: 14,
+        titlePadding: 8
+        // titleOrient: "bottom"
       }
     };
 
@@ -175,17 +175,20 @@ class TimeSeriesHistogramPlot extends Component {
     const data = { values: [] };
     for (let ti = 0; ti < this.props.facet.time_names.length; ti++) {
       for (let vi = 0; vi < this.props.facet.value_names.length; vi++) {
-	let name = this.props.facet.value_names[vi];
-	let count = this.props.facet.time_series_value_counts[ti][vi];
-	let time = this.props.facet.time_names[ti];
-	data.values.push({
-	  facet_value: name,
-	  count: count,
-	  time_series_value: time,
-	  dimmed: this.isValueDimmed(name, this.props.facet.es_field_name + "." + time),
-	  text: `${name}: ${count}`,
-	  opaque: true
-	});
+        let name = this.props.facet.value_names[vi];
+        let count = this.props.facet.time_series_value_counts[ti][vi];
+        let time = this.props.facet.time_names[ti];
+        data.values.push({
+          facet_value: name,
+          count: count,
+          time_series_value: time,
+          dimmed: this.isValueDimmed(
+            name,
+            this.props.facet.es_field_name + "." + time
+          ),
+          text: `${name}: ${count}`,
+          opaque: true
+        });
       }
     }
 
@@ -223,7 +226,7 @@ class TimeSeriesHistogramPlot extends Component {
 
     return (
       <div className={classes.timeSeriesHistogramPlot}>
-	<div className={classes.vega}> {vega} </div>
+        <div className={classes.vega}> {vega} </div>
       </div>
     );
   }
@@ -241,9 +244,11 @@ class TimeSeriesHistogramPlot extends Component {
     // Ignore clicks which are not located on histogram
     // bars.
     if (item && item.datum && item.datum.facet_value) {
-      let tsv_es_field_name = (this.props.facet.es_field_name + "." +
-			       item.datum.time_series_value);
-      let selectedValues = this.props.selectedFacetValues.get(tsv_es_field_name);
+      let tsv_es_field_name =
+        this.props.facet.es_field_name + "." + item.datum.time_series_value;
+      let selectedValues = this.props.selectedFacetValues.get(
+        tsv_es_field_name
+      );
       // facetValue is a string, eg "female"
       // If bar was clicked, item.datum.facet_value is populated.
       // If axis label was clicked, item.datum.value is populated.
@@ -262,11 +267,7 @@ class TimeSeriesHistogramPlot extends Component {
         isSelected = true;
       }
 
-      this.props.updateFacets(
-        tsv_es_field_name,
-        facetValue,
-        isSelected
-      );
+      this.props.updateFacets(tsv_es_field_name, facetValue, isSelected);
     }
   }
 
