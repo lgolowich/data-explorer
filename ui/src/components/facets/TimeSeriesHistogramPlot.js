@@ -63,7 +63,7 @@ class TimeSeriesHistogramPlot extends Component {
           ticks: false
         },
         facet: {
-          spacing: 10
+          spacing: 8
         }
       },
       encoding: {
@@ -107,7 +107,7 @@ class TimeSeriesHistogramPlot extends Component {
         right: 0,
         bottom: 16
       },
-      width: 55
+      width: 50
     };
 
     let facetValueNames = this.props.facet.value_names.slice();
