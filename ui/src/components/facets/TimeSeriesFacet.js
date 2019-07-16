@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 
 import * as Style from "libs/style";
-import colors from "libs/colors";
 import FacetHeader from "components/facets/FacetHeader";
 import TimeSeriesHistogramPlot from "components/facets/TimeSeriesHistogramPlot";
 
@@ -19,10 +17,6 @@ const styles = {
 };
 
 class TimeSeriesFacet extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes } = this.props;
 

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import classNames from "classnames";
 import { Handler } from "vega-tooltip";
 import * as vl from "vega-lite";
 import Vega from "react-vega";
@@ -7,8 +6,6 @@ import { withStyles } from "@material-ui/core/styles";
 
 import colors from "libs/colors";
 import "./HistogramFacet.css";
-import * as Style from "libs/style";
-import FacetHeader from "components/facets/FacetHeader";
 
 const styles = {
   timeSeriesHistogramPlot: {
