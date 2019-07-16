@@ -52,6 +52,12 @@ class TimeSeriesHeatmapPlot extends Component {
 
     const baseVegaLiteSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v3.json",
+      usermeta: {
+        embedOptions: {
+          // Don't show menu with export buttons 'Save as SVG', etc.
+          actions: false
+        }
+      },
       config: {
         // Config that applies to both axes go here
         axis: {
