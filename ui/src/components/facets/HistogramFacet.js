@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import colors from "libs/colors";
 import "./HistogramFacet.css";
 import * as Style from "libs/style";
 import FacetHeader from "components/facets/FacetHeader";
@@ -18,10 +17,6 @@ const styles = {
 };
 
 class HistogramFacet extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes } = this.props;
 

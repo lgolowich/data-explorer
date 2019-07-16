@@ -6,7 +6,6 @@ import Vega from "react-vega";
 import { withStyles } from "@material-ui/core/styles";
 
 import "./HistogramFacet.css";
-import * as Style from "libs/style";
 import colors from "libs/colors";
 
 const styles = {
