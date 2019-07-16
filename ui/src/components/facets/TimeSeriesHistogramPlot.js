@@ -61,6 +61,9 @@ class TimeSeriesHistogramPlot extends Component {
           labelFontWeight: 500,
           labelPadding: 9,
           ticks: false
+        },
+        facet: {
+          spacing: 10
         }
       },
       encoding: {
@@ -104,7 +107,7 @@ class TimeSeriesHistogramPlot extends Component {
         right: 0,
         bottom: 16
       },
-      width: 60
+      width: 55
     };
 
     let facetValueNames = this.props.facet.value_names.slice();
@@ -159,13 +162,13 @@ class TimeSeriesHistogramPlot extends Component {
         labelFontWeight: 500,
         labelFontSize: 14,
         labelPadding: 12,
-        // labelOrient: "bottom",
+        labelOrient: "bottom",
         titleColor: colors.dark(),
         titleFont: "Montserrat",
         titleFontWeight: 500,
         titleFontSize: 14,
-        titlePadding: 8
-        // titleOrient: "bottom"
+        titlePadding: 8,
+        titleOrient: "bottom"
       }
     };
 

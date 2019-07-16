@@ -24,6 +24,20 @@ function FacetsGrid(props) {
     return facet.is_time_series;
   }
 
+  function numCols(facet) {
+    if (isTimeSeries(facet)) {
+      if (facet.time_names.length <= 3) {
+        return 1;
+      } else if (facet.time_names.length <= 6) {
+        return 2;
+      } else {
+        return 3;
+      }
+    } else {
+      return 1;
+    }
+  }
+
   function getFacetDefinition(facet) {
     if (isTimeSeries(facet)) {
       return (
@@ -35,7 +49,7 @@ function FacetsGrid(props) {
             facet.es_field_name
           )}
           selectedFacetValues={props.selectedFacetValues}
-	  timeSeriesUnit={props.timeSeriesUnit}
+          timeSeriesUnit={props.timeSeriesUnit}
         />
       );
     } else {
@@ -61,9 +75,9 @@ function FacetsGrid(props) {
         classes={{ tile: classes.tile }}
         key={facet.name}
         style={{ padding: 0 }}
-        cols={isTimeSeries(facet) ? 3 : 1}
+        cols={numCols(facet)}
       >
-	{getFacetDefinition(facet)}
+        {getFacetDefinition(facet)}
       </GridListTile>
     );
   });
