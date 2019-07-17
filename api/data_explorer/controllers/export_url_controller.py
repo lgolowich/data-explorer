@@ -79,7 +79,12 @@ def _check_preconditions():
 
 
 def _get_range_clause(column, value, bucket_interval):
-    arr = value.split('-')
+    if value[0] == '-':
+        # avoid minus sign with split
+        arr = value[1:].split('-', 1)
+        arr[0] = '-' + arr[0]
+    else:
+        arr = value.split('-', 1)
     if len(arr) > 1:
         low = arr[0]
         high = arr[1]
