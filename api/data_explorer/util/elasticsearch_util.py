@@ -82,22 +82,39 @@ def get_bucket_interval(es, field_name, time_series_vals):
         # Some datasets have (0, 1) instead of booleans. Return 1 for that case
         # instead of .1.
         return 1
-    elif field_range < 15:
+    elif field_range < 8:
         return 1
+    elif field_range < 20:
+        return 2
+    elif field_range < 150:
+        # Make the ranges easy to read (10-19,20-29 instead of 10-17,18-25).
+        return 10
+    elif field_range < 300:
+        return 20
+    elif field_range < 800:
+        return 50
+    elif field_range < 1500:
+        return 100
+    elif field_range < 15000:
+        return 1000
+    elif field_range < 150000:
+        return 10000
+    elif field_range < 1500000:
+        return 100000
+    elif field_range < 15000000:
+        return 1000000
+    elif field_range < 150000000:
+        return 10000000
+    elif field_range < 1500000000:
+        return 100000000
+    elif field_range < 15000000000:
+        return 1000000000
+    elif field_range < 150000000000:
+        return 10000000000
+    elif field_range < 1500000000000:
+        return 100000000000
     else:
-        # Set bucket interval to 1, 2, or 5 * 10^n to get around 8 to
-        # 15 intervals.
-        log_range = math.log10(field_range)
-        int_range = int(log_range)
-        frac_range = log_range - int_range
-        if frac_range < math.log10(1.5):
-            return 10**(int_range - 1)
-        elif frac_range < math.log10(3):
-            return 2 * 10**(int_range - 1)
-        elif frac_range < math.log10(8):
-            return 5 * 10**(int_range - 1)
-        else:
-            return 10**int_range
+        return 1000000000000
 
 
 def range_to_number(interval_str):
@@ -111,9 +128,11 @@ def range_to_number(interval_str):
     else:
         number = interval_str.split('-')[0]
 
-    number = number.replace('M', '000000')
-    number = number.replace('B', '000000000')
-    if '.' in number:
+    if number[-1] == 'M':
+        return int(round(float(number[:-1]) * 1000000))
+    elif number[-1] == 'B':
+        return int(round(float(number[:-1]) * 1000000000))
+    elif '.' in number:
         return float(number)
     else:
         return int(number)
@@ -127,13 +146,21 @@ def number_to_range(interval_start, interval):
     elif interval == 1:
         # Return something like "5"
         return '%d' % interval_start
-    if interval < 1000000:
+    elif interval < 1000000:
         # Return something like "10-19"
         return '%d-%d' % (interval_start, interval_start + interval - 1)
+    elif interval == 1000000:
+        # Return something like "1.0M-1.9M"
+        return '%d.0M-%d.9M' % (interval_start / 1000000,
+                                interval_start / 1000000)
     elif interval < 1000000000:
         # Return something like "10M-19M"
         return '%dM-%dM' % (interval_start / 1000000,
                             (interval_start + interval - 1) / 1000000)
+    elif interval == 1000000000:
+        # Return something like "1.0B-1.9B"
+        return '%d.0B-%d.9B' % (interval_start / 1000000000,
+                                interval_start / 1000000000)
     else:
         # Return something like "10B-19B"
         return '%dB-%dB' % (interval_start / 1000000000,

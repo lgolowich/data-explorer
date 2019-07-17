@@ -86,10 +86,10 @@ def _get_range_clause(column, value, bucket_interval):
     else:
         return column + " = " + value
     if low.endswith('M'):
-        low = int(low[:-1]) * 1000000
+        low = int(round(float(low[:-1]) * 1000000))
         high = low + bucket_interval
     elif low.endswith('B'):
-        low = int(low[:-1]) * 1000000000
+        low = int(round(float(low[:-1]) * 1000000000))
         high = low + bucket_interval
     elif '.' not in low:
         low = int(low)
