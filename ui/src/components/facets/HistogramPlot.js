@@ -148,13 +148,13 @@ class HistogramPlot extends Component {
         labelLimit: facetValueNameWidthLimit
       },
       scale: {
-        // Bar height (15px) + whitespace height (10px) = 25px
-        rangeStep: 25,
-        // Proportion of step that is whitespace; 10/25 = .4
-        paddingInner: 0.4,
-        // There should be 5 pixels of whitespace under bottom bar
-        //. 5/25/2 ~= .1
-        paddingOuter: 0.1
+        // Bar height (18px) + whitespace height (13px) = 31px
+        rangeStep: 31,
+        // Proportion of step that is whitespace; 13/31 = .42
+        paddingInner: 0.42,
+        // There should be 7 pixels of whitespace under bottom bar
+        //. 7/31/2 ~= .12
+        paddingOuter: 0.12
       }
     };
 
