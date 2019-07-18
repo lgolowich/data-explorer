@@ -138,7 +138,6 @@ class TimeSeriesHeatmapPlot extends Component {
         titleOrient: "bottom"
       },
       scale: {
-        // Bar height (15px) + whitespace height (10px) = 25px
         rangeStep: 20
       }
     };
