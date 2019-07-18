@@ -24,19 +24,21 @@ const styles = {
 const facetValueNameWidthLimit = 120;
 
 function isCategorical(es_field_type) {
-  return (
-    es_field_type === "text" || es_field_type === "samples_overview"
-  );
+  return es_field_type === "text" || es_field_type === "samples_overview";
 }
 
 // From https://stackoverflow.com/questions/39342575
 function maxCount(arr) {
-  let maxRow = arr.map(function(row){ return Math.max.apply(Math, row); });
+  let maxRow = arr.map(function(row) {
+    return Math.max.apply(Math, row);
+  });
   return Math.max.apply(null, maxRow);
 }
 
 function minCount(arr) {
-  let minRow = arr.map(function(row){ return Math.min.apply(Math, row); });
+  let minRow = arr.map(function(row) {
+    return Math.min.apply(Math, row);
+  });
   return Math.min.apply(null, minRow);
 }
 
@@ -54,58 +56,58 @@ class TimeSeriesHeatmapPlot extends Component {
     const baseVegaLiteSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v3.json",
       config: {
-	// Config that applies to both axes go here
-	axis: {
-	  domainColor: colors.gray[4],
-	  gridColor: colors.gray[6],
-	  labelColor: colors.gray[0],
-	  labelFont: "Montserrat",
-	  labelFontWeight: 500,
-	  labelPadding: 9,
-	  ticks: false
-	}
+        // Config that applies to both axes go here
+        axis: {
+          domainColor: "#aeb3ba",
+          gridColor: "#ebedef",
+          labelColor: colors.dark(),
+          labelFont: "Montserrat",
+          labelFontWeight: 500,
+          labelPadding: 9,
+          ticks: false
+        }
       },
       encoding: {
-	tooltip: [
-	  {
-	    field: "text_name",
-	    title: this.props.facet.name,
-	    type: "nominal"
-	  },
-	  {
-	    field: "time_series_value",
-	    title: this.props.timeSeriesUnit,
-	    type: "nominal"
-	  },
-	  {
-	    field: "text_count",
-	    title: "Number Participants",
-	    type: "nominal"
-	  }
-	],
-	color: {},
-	y: {},
-	x: {},
-	// opacity is needed for creating transparent bars.
-	opacity: {
-	  field: "opaque",
-	  type: "ordinal",
-	  scale: {
-	    domain: [0, .1, 1],
+        tooltip: [
+          {
+            field: "text_name",
+            title: this.props.facet.name,
+            type: "nominal"
+          },
+          {
+            field: "time_series_value",
+            title: this.props.timeSeriesUnit,
+            type: "nominal"
+          },
+          {
+            field: "text_count",
+            title: "Number Participants",
+            type: "nominal"
+          }
+        ],
+        color: {},
+        y: {},
+        x: {},
+        // opacity is needed for creating transparent bars.
+        opacity: {
+          field: "opaque",
+          type: "ordinal",
+          scale: {
+            domain: [0, 0.1, 1],
             range: [0, 1]
-	  },
-	  legend: null
-	}
+          },
+          legend: null
+        }
       },
       mark: {
-	type: "rect",
-	cursor: "pointer"
+        type: "rect",
+        cursor: "pointer"
       },
       padding: {
-	left: 0,
-	top: 17,
-	right: 0,
-	bottom: 16
+        left: 0,
+        top: 17,
+        right: 0,
+        bottom: 16
       },
       width: 600
     };
@@ -125,12 +127,12 @@ class TimeSeriesHeatmapPlot extends Component {
       axis: {
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit,
-	titleColor: colors.gray[0],
-      	titleFont: "Montserrat",
-      	titleFontWeight: 500,
-      	titleFontSize: 14,
-      	titlePadding: 20,
-      	titleOrient: "bottom"
+        titleColor: colors.dark(),
+        titleFont: "Montserrat",
+        titleFontWeight: 500,
+        titleFontSize: 14,
+        titlePadding: 20,
+        titleOrient: "bottom"
       },
       scale: {
         // Bar height (15px) + whitespace height (10px) = 25px
@@ -143,14 +145,14 @@ class TimeSeriesHeatmapPlot extends Component {
       type: "quantitative",
       title: "Number Participants",
       legend: {
-	labelFont: "Montserrat",
-	labelFontSize: 10,
-	titleFont: "Montserrat",
-	titleFontSize: 10,
-	padding: 22 // has to be large enough to fit title horizontally
+        labelFont: "Montserrat",
+        labelFontSize: 10,
+        titleFont: "Montserrat",
+        titleFontSize: 10,
+        padding: 22 // has to be large enough to fit title horizontally
       },
       scale: {
-	scheme: "viridis"
+        scheme: "viridis"
       }
     };
 
@@ -159,19 +161,19 @@ class TimeSeriesHeatmapPlot extends Component {
       type: "ordinal",
       title: this.props.timeSeriesUnit,
       axis: {
-      	labelColor: colors.gray[0],
-      	labelFont: "Montserrat",
-      	labelFontWeight: 500,
-      	labelFontSize: 12,
-      	labelPadding: 12,
-	labelAngle: 0,
-      	labelOrient: "bottom",
-      	titleColor: colors.gray[0],
-      	titleFont: "Montserrat",
-      	titleFontWeight: 500,
-      	titleFontSize: 14,
-      	titlePadding: 8,
-      	titleOrient: "bottom"
+        labelColor: colors.dark(),
+        labelFont: "Montserrat",
+        labelFontWeight: 500,
+        labelFontSize: 12,
+        labelPadding: 12,
+        labelAngle: 0,
+        labelOrient: "bottom",
+        titleColor: colors.dark(),
+        titleFont: "Montserrat",
+        titleFontWeight: 500,
+        titleFontSize: 14,
+        titlePadding: 8,
+        titleOrient: "bottom"
       }
     };
 
@@ -184,18 +186,22 @@ class TimeSeriesHeatmapPlot extends Component {
     const data = { values: [] };
     for (let ti = 0; ti < this.props.facet.time_names.length; ti++) {
       for (let vi = 0; vi < this.props.facet.value_names.length; vi++) {
-	let name = this.props.facet.value_names[vi];
-	let count = this.props.facet.time_series_value_counts[ti][vi];
-	let time = this.props.facet.time_names[ti];
-	data.values.push({
-	  facet_value: name,
-	  count: count,
-	  time_series_value: time,
-	  text_name: `${name}`,
-	  text_count: `${count}`,
-	  opaque: (this.isValueDimmed(name, this.props.facet.es_field_name + "." + time)
-		   ? .1 : 1),
-	});
+        let name = this.props.facet.value_names[vi];
+        let count = this.props.facet.time_series_value_counts[ti][vi];
+        let time = this.props.facet.time_names[ti];
+        data.values.push({
+          facet_value: name,
+          count: count,
+          time_series_value: time,
+          text_name: `${name}`,
+          text_count: `${count}`,
+          opaque: this.isValueDimmed(
+            name,
+            this.props.facet.es_field_name + "." + time
+          )
+            ? 0.1
+            : 1
+        });
       }
     }
 
@@ -205,12 +211,12 @@ class TimeSeriesHeatmapPlot extends Component {
       // Create transparent marks with count 0, as the heatmap color
       // scale only works with at least two distinct possible values.
       data.values = data.values.concat(
-	data.values.map(v => {
+        data.values.map(v => {
           const invisible = Object.assign({}, v);
           invisible.opaque = 0;
-	  invisible.count = 0;
+          invisible.count = 0;
           return invisible;
-	})
+        })
       );
     }
 
@@ -236,7 +242,7 @@ class TimeSeriesHeatmapPlot extends Component {
 
     return (
       <div className={classes.timeSeriesHeatmapPlot}>
-	<div className={classes.vega}> {vega} </div>
+        <div className={classes.vega}> {vega} </div>
       </div>
     );
   }
@@ -254,9 +260,11 @@ class TimeSeriesHeatmapPlot extends Component {
     // Ignore clicks which are not located on histogram
     // bars.
     if (item && item.datum && item.datum.facet_value) {
-      let tsv_es_field_name = (this.props.facet.es_field_name + "." +
-			       item.datum.time_series_value);
-      let selectedValues = this.props.selectedFacetValues.get(tsv_es_field_name);
+      let tsv_es_field_name =
+        this.props.facet.es_field_name + "." + item.datum.time_series_value;
+      let selectedValues = this.props.selectedFacetValues.get(
+        tsv_es_field_name
+      );
       // facetValue is a string, eg "female"
       // If bar was clicked, item.datum.facet_value is populated.
       // If axis label was clicked, item.datum.value is populated.
@@ -275,11 +283,7 @@ class TimeSeriesHeatmapPlot extends Component {
         isSelected = true;
       }
 
-      this.props.updateFacets(
-        tsv_es_field_name,
-        facetValue,
-        isSelected
-      );
+      this.props.updateFacets(tsv_es_field_name, facetValue, isSelected);
     }
   }
 
