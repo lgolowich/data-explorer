@@ -46,7 +46,6 @@ class HistogramFacet extends Component {
               values={values}
               selectedValues={this.props.selectedValues}
               updateFacets={this.props.updateFacets}
-              isTimeSeries={false}
             />
           )}
       </div>

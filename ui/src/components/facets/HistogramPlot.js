@@ -27,22 +27,16 @@ function isCategorical(es_field_type) {
 // https://i.imgur.com/I5A6EUn.png
 // This method increases chart width in those cases:
 // https://i.imgur.com/JSKHSkS.png
-function setWidth(facetValueNames, isTimeSeries, baseVegaLiteSpec) {
-  if (isTimeSeries) {
-    baseVegaLiteSpec.width = 60;
+function setWidth(facetValueNames, baseVegaLiteSpec) {
+  const defaultChartWidth = 200;
+  const context = canvas(1, 1).getContext("2d");
+  const nameWidths = facetValueNames.map(n => context.measureText(n).width);
+  const maxNameWidth_currentFacet = Math.max(...nameWidths);
+  if (maxNameWidth_currentFacet > facetValueNameWidthLimit) {
+    baseVegaLiteSpec.width = defaultChartWidth;
   } else {
-    const defaultChartWidth = 200;
-    const context = canvas(1, 1).getContext("2d");
-    const nameWidths = facetValueNames.map(n => context.measureText(n).width);
-    const maxNameWidth_currentFacet = Math.max(...nameWidths);
-    if (maxNameWidth_currentFacet > facetValueNameWidthLimit) {
-      baseVegaLiteSpec.width = defaultChartWidth;
-    } else {
-      baseVegaLiteSpec.width =
-        defaultChartWidth +
-        facetValueNameWidthLimit -
-        maxNameWidth_currentFacet;
-    }
+    baseVegaLiteSpec.width =
+      defaultChartWidth + facetValueNameWidthLimit - maxNameWidth_currentFacet;
   }
 }
 
@@ -126,10 +120,7 @@ class HistogramPlot extends Component {
     };
 
     let facetValueNames = this.props.values.map(v => v.name);
-    setWidth(facetValueNames, this.props.isTimeSeries, baseVegaLiteSpec);
-
-    let hasNameLabels = "labels" in this.props ? this.props.labels : true;
-    let hasCountLabels = !this.props.isTimeSeries;
+    setWidth(facetValueNames, baseVegaLiteSpec);
 
     const vegaLiteSpec = Object.assign({}, baseVegaLiteSpec);
     if (!isCategorical(this.props.es_field_type)) {
@@ -139,11 +130,10 @@ class HistogramPlot extends Component {
     const facetValueNameAxis = {
       field: "facet_value",
       type: "nominal",
-      title:
-        this.props.isTimeSeries && hasNameLabels ? this.props.axisName : null,
+      title: null,
       sort: facetValueNames,
       axis: {
-        labels: hasNameLabels,
+        labels: true,
         labelFontSize: 12,
         labelLimit: facetValueNameWidthLimit
       },
@@ -160,7 +150,7 @@ class HistogramPlot extends Component {
 
     const facetValueCountAxis = {
       axis: {
-        labels: hasCountLabels,
+        labels: true,
         labelFontSize: 10
       },
       field: "count",
