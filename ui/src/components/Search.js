@@ -209,7 +209,9 @@ class Search extends React.Component {
       let facetName = this.props.facets.has(key)
         ? this.props.facets.get(key).name
         : this.props.facets.get(keySplit.slice(0, -1).join(".")).name +
-          " (time " +
+          " (" +
+          this.props.timeSeriesUnit +
+          " " +
           keySplit[keySplit.length - 1] +
           ")";
       if (values.length > 0) {
