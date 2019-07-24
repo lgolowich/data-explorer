@@ -84,8 +84,9 @@ def init_elasticsearch():
 
     # Use the cached JSON files to load the example 1000 genomes and
     # framingham teaching datasets without having to run the indexer.
-    if (app.app.config['INDEX_NAME'] == '1000_genomes' or
-            app.app.config['INDEX_NAME'] == 'framingham_heart_study_teaching_dataset'):
+    if (app.app.config['INDEX_NAME'] == '1000_genomes'
+            or app.app.config['INDEX_NAME'] ==
+            'framingham_heart_study_teaching_dataset'):
         index_path = os.path.join(app.app.config['DATASET_CONFIG_DIR'],
                                   'index.json')
         mappings_path = os.path.join(app.app.config['DATASET_CONFIG_DIR'],
@@ -211,24 +212,24 @@ def _process_facets(es):
 
     for facet_config in facets_config:
         es_base_field_name = facet_config['elasticsearch_field_name']
-        if elasticsearch_util.is_time_series(es, es_base_field_name, mapping):
-            is_time_series = True
+        is_time_series = elasticsearch_util.is_time_series(
+            es, es_base_field_name, mapping)
+        if is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es, es_base_field_name, mapping)
             es_field_names = [
                 es_base_field_name + '.' + tsv for tsv in time_series_vals
             ]
         else:
-            is_time_series = False
             time_series_vals = []
             es_field_names = [es_base_field_name]
 
-        interval = -1
         for es_field_name in es_field_names:
             if es_field_name in facets:
                 raise EnvironmentError('%s appears more than once in ui.json' %
                                        es_field_name)
-            field_type = elasticsearch_util.get_field_type(es, es_field_name, mapping)
+            field_type = elasticsearch_util.get_field_type(
+                es, es_field_name, mapping)
             ui_facet_name = facet_config['ui_facet_name']
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name
@@ -240,13 +241,9 @@ def _process_facets(es):
             if 'ui_facet_description' in facet_config:
                 facets[es_field_name]['description'] = facet_config[
                     'ui_facet_description']
-
-            if field_type != 'text' and field_type != 'boolean' and interval < 0:
-                interval = elasticsearch_util.get_bucket_interval(
-                    es, es_base_field_name, time_series_vals)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
-                    es, es_field_name, field_type, interval)
+                    es, es_field_name, field_type, time_series_vals)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch

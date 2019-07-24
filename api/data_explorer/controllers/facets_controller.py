@@ -28,21 +28,21 @@ def _process_extra_facets(extra_facets):
     mapping = es.indices.get_mapping(index=current_app.config['INDEX_NAME'])
 
     for es_base_field_name in extra_facets:
-        if elasticsearch_util.is_time_series(es, es_base_field_name, mapping):
-            is_time_series = True
+        is_time_series = elasticsearch_util.is_time_series(
+            es, es_base_field_name, mapping)
+        if is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es, es_base_field_name, mapping)
             es_field_names = [
                 es_base_field_name + '.' + tsv for tsv in time_series_vals
             ]
         else:
-            is_time_series = False
             time_series_vals = []
             es_field_names = [es_base_field_name]
 
-        interval = -1
         for es_field_name in es_field_names:
-            field_type = elasticsearch_util.get_field_type(es, es_field_name, mapping)
+            field_type = elasticsearch_util.get_field_type(
+                es, es_field_name, mapping)
             ui_facet_name = es_base_field_name.split('.')[-1]
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name
@@ -55,13 +55,9 @@ def _process_extra_facets(extra_facets):
             facets[es_field_name][
                 'description'] = elasticsearch_util.get_field_description(
                     es, es_base_field_name)
-
-            if field_type != 'text' and field_type != 'boolean' and interval < 0:
-                interval = elasticsearch_util.get_bucket_interval(
-                    es, es_base_field_name, time_series_vals)
             facets[es_field_name][
                 'es_facet'] = elasticsearch_util.get_elasticsearch_facet(
-                    es, es_field_name, field_type, interval)
+                    es, es_field_name, field_type, time_series_vals)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch
@@ -108,7 +104,8 @@ def _get_time_series_params(ts_value_names, ts_values):
         cur_value_counts = entry[1]
         entry_array = [0 for name in value_names]
         for i in range(len(cur_value_names)):
-            entry_array[ts_value_names[cur_value_names[i]]] = cur_value_counts[i]
+            entry_array[ts_value_names[
+                cur_value_names[i]]] = cur_value_counts[i]
         time_series_value_counts.append(entry_array)
     return value_names, time_series_value_counts
 
@@ -166,7 +163,9 @@ def _get_time_series_facet(time_series_facets, es_response_facets):
                 else:
                     ts_value_names[value_names[i]] = -count
             else:
-                ts_value_names[value_names[i]] = elasticsearch_util.range_to_number(value_names[i])
+                ts_value_names[
+                    value_names[i]] = elasticsearch_util.range_to_number(
+                        value_names[i])
 
         if not all(count == 0 for count in value_counts):
             ts_time_names.append(int(es_field_name.split('.')[-1]))
@@ -234,18 +233,21 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
             start = i
             while i < len(combined_facets):
                 next_es_field_name, next_facet_info = combined_facets[i]
-                next_ts_field_name = '.'.join(next_es_field_name.split('.')[:-1])
+                next_ts_field_name = '.'.join(
+                    next_es_field_name.split('.')[:-1])
                 if (next_facet_info.get('is_time_series')
-                    and next_ts_field_name == ts_field_name):
+                        and next_ts_field_name == ts_field_name):
                     i += 1
                 else:
                     break
-            facets.append(_get_time_series_facet(combined_facets[start:i],
-                                                 es_response_facets))
+            facets.append(
+                _get_time_series_facet(combined_facets[start:i],
+                                       es_response_facets))
         else:
             i += 1
-            facets.append(_get_histogram_facet(es_field_name, facet_info,
-                                               es_response_facets))
+            facets.append(
+                _get_histogram_facet(es_field_name, facet_info,
+                                     es_response_facets))
 
     return FacetsResponse(facets=facets,
                           count=es_response._faceted_search.count())

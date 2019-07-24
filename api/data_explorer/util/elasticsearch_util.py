@@ -333,7 +333,7 @@ def _maybe_get_nested_facet(elasticsearch_field_name, es_facet):
 
 
 def get_elasticsearch_facet(es, elasticsearch_field_name, field_type,
-                            interval):
+                            time_series_vals):
     if field_type == 'text':
         # Use ".keyword" because we want aggregation on keyword field, not
         # term field. See
@@ -345,13 +345,14 @@ def get_elasticsearch_facet(es, elasticsearch_field_name, field_type,
         es_facet = TermsFacet(field=elasticsearch_field_name)
     else:
         # Assume numeric type.
-        # Creating this facet is a two-step process.
-        # 1) Get max value
-        # 2) Based on max value, determine bucket size. Create
-        #    HistogramFacet with this bucket size.
+        if time_series_vals:
+            es_base_field_name = elasticsearch_field_name.rsplit('.', 1)[0]
+        else:
+            es_base_field_name = elasticsearch_field_name
+        interval = get_bucket_interval(es, es_base_field_name,
+                                       time_series_vals)
         # TODO: When https://github.com/elastic/elasticsearch/issues/31828
-        # is fixed, use AutoHistogramFacet instead. Will no longer need 2
-        # steps.
+        # is fixed, use AutoHistogramFacet instead.
         es_facet = HistogramFacet(field=elasticsearch_field_name,
                                   interval=interval)
 
