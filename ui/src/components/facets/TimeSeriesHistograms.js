@@ -32,6 +32,8 @@ function maxCount(arr) {
   return Math.max.apply(null, maxRow);
 }
 
+// Creates small multiples plots for displaying time series data. See
+// https://i.imgur.com/YsAV5P6.png for an example.
 class TimeSeriesHistogramPlot extends Component {
   constructor(props) {
     super(props);
@@ -52,8 +54,8 @@ class TimeSeriesHistogramPlot extends Component {
         }
       },
       config: {
-        // Config that applies to both axes go here
         axis: {
+          // Config that applies to both axes go here
           domainColor: "#aeb3ba",
           gridColor: "#ebedef",
           labelColor: colors.dark(),
@@ -104,7 +106,7 @@ class TimeSeriesHistogramPlot extends Component {
       padding: {
         left: 0,
         top: 17,
-        right: 0,
+        right: 35,
         bottom: 16
       },
       width: 50

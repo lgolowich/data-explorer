@@ -235,66 +235,31 @@ def get_field_description(es, field_name):
     return ''
 
 
-def get_field_type(es, field_name):
-    # elasticsearch_dsl.Mapping, which gets mappings for all fields, would be
-    # easier, but we can't use it.
-    # BigQuery indexer uses field names like "project.dataset.table.column".
-    # elasticsearch_dsl.Mapping corresponds to
-    # "curl /index/_mapping/doc_type". That returns a nested dict:
-    #   "project":
-    #     "dataset":
-    #       ...
-    # It's difficult to retrieve type from the nested dict.
-    # Instead, we get the type for one field:
-    # "curl /index/_mapping/doc_type/project.dataset.table.column".
-    # This has the benefit that we can support Elasticsearch documents that are
-    # truly nested, such as HCA Orange Box. elasticsearch_field_name in ui.json
-    # would be "parent.child".
-    mapping = es.indices.get_field_mapping(
-        fields=field_name,
-        index=current_app.config['INDEX_NAME'],
-        doc_type='type')
-
-    if mapping == {}:
-        raise ValueError(
-            'elasticsearch_field_name %s not found in Elasticsearch index %s' %
-            (field_name, current_app.config['INDEX_NAME']))
-
-    # If field_name is "a.b.c", last_part is "c".
-    last_part = field_name.split('.')[len(field_name.split('.')) - 1]
-    return mapping[current_app.config['INDEX_NAME']]['mappings']['type'][
-        field_name]['mapping'][last_part]['type']
+def get_field_type(es, field_name, mapping):
+    submapping = mapping[
+        current_app.config['INDEX_NAME']]['mappings']['type']['properties']
+    for subname in field_name.split('.')[:-1]:
+        submapping = submapping[subname]['properties']
+    submapping = submapping[field_name.split('.')[-1]]
+    return submapping['type']
 
 
-def is_time_series(es, field_name):
+def is_time_series(es, field_name, mapping):
     """Returns true iff field_name has time series data.
     """
-    mapping = es.indices.get_field_mapping(
-        fields=field_name,
-        index=current_app.config['INDEX_NAME'],
-        doc_type='type')
-    its_field_name = field_name + '._is_time_series'
-    its_mapping = es.indices.get_field_mapping(
-        fields=its_field_name,
-        index=current_app.config['INDEX_NAME'],
-        doc_type='type')
-
-    if its_mapping:
-        last_part = its_field_name.split('.')[-1]
-        assert last_part == '_is_time_series'
-        its_field_type = its_mapping[current_app.config['INDEX_NAME']][
-            'mappings']['type'][its_field_name]['mapping'][last_part]['type']
-        assert its_field_type == 'boolean'
-        return True
-    elif mapping:
-        return False
-    else:
-        raise ValueError(
-            'elasticsearch_field_name %s not found in Elasticsearch index %s' %
-            (field_name, current_app.config['INDEX_NAME']))
+    submapping = mapping[
+        current_app.config['INDEX_NAME']]['mappings']['type']['properties']
+    for subname in field_name.split('.')[:-1]:
+        submapping = submapping[subname]['properties']
+    submapping = submapping[field_name.split('.')[-1]]
+    return ('properties' in submapping
+            and '_is_time_series' in submapping['properties'])
 
 
 def get_time_series_vals(es, field_name, mapping):
+    """Returns a sorted array of the times at which field_name could have
+    data.
+    """
     submapping = mapping[
         current_app.config['INDEX_NAME']]['mappings']['type']['properties']
     for subname in field_name.split('.'):

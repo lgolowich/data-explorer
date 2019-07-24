@@ -3,9 +3,6 @@
 //   your dataset. We recommend:
 // - A word that appears in BigQuery column descriptions, eg "center" for 1000 Genomes
 // - A prefix that appears in BigQuery column contents, eg "pat" for 1000 Genomes
-// time_series_unit:
-//   Optional. The unit of time (such as month, year, etc.) with which
-//   to label the time axis.
 // facets:
 //   Facets to be shown in the UI. Facets will appear in the order they are
 //   listed here.
@@ -17,7 +14,6 @@
 //   Required. Elasticsearch field name.
 {
   "search_placeholder_text": "Search to add a facet. Try \"center\" or \"pat\"",
-  "time_series_unit": "",
   "facets": [
     {
       "ui_facet_name": "",

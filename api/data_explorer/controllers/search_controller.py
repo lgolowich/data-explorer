@@ -30,6 +30,32 @@ def _results_from_fields_index(fields):
 
 
 def _results_from_main_index(fields, query_regex, time_series_stem=''):
+    """_results_from_main_index
+
+    Returns dictionary mapping elasticsearch field names from fields
+    to pairs containing that field's values that match query_regex,
+    and a boolean indicating if the field is a time series
+    field. Recursively iterates down fields, an excerpt of which might
+    look like:
+
+    {...
+        'project-name.dataset_name.table_name.field_a': 5,
+        'project-name.dataset_name.table_name.field_b': {
+            '_is_time_series': True,
+            '0': 3,
+            '12': 7,
+            '24': 8
+        },
+    ...
+    }
+
+    Above, field_b is a time series field, but field_a is
+    not. Therefore when this function recursively iterates on field_b,
+    it will have
+    time_series_stem='project-name.dataset_name.table_name.field_b' so
+    that the child invocation has access to the entire elasticsearch
+    field name.
+    """
     field_to_facet_values = dict()
     for field_name, field_value in fields.items():
         if isinstance(field_value, dict):

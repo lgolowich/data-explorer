@@ -22,12 +22,12 @@
 //   Unit of time_series_column. If time_series_column is set, this
 //   must be set. Examples: Month, Year.
 {
-  "table_names": [
-    "verily-public-data.framingham_heart_study_teaching.framingham_heart_study_teaching"
-  ],
-  "participant_id_column": "RANDID",
+  "table_names": [],
+
+  "participant_id_column": "",
   "sample_id_column": "",
+
   "sample_file_columns": {},
-  "time_series_column": "PERIOD",
-  "time_series_unit": "Period"
+  "time_series_column": "",
+  "time_series_unit": ""
 }

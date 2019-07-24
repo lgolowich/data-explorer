@@ -85,7 +85,7 @@ def init_elasticsearch():
     # Use the cached JSON files to load the example 1000 genomes and
     # framingham teaching datasets without having to run the indexer.
     if (app.app.config['INDEX_NAME'] == '1000_genomes' or
-            app.app.config['INDEX_NAME'] == 'framingham_heart_study_teaching'):
+            app.app.config['INDEX_NAME'] == 'framingham_heart_study_teaching_dataset'):
         index_path = os.path.join(app.app.config['DATASET_CONFIG_DIR'],
                                   'index.json')
         mappings_path = os.path.join(app.app.config['DATASET_CONFIG_DIR'],
@@ -143,8 +143,6 @@ def _process_ui():
     if config.get('search_placeholder_text'):
         app.app.config['SEARCH_PLACEHOLDER_TEXT'] = config.get(
             'search_placeholder_text')
-    if config.get('time_series_unit'):
-        app.app.config['TIME_SERIES_UNIT'] = config.get('time_series_unit')
 
 
 def _process_bigquery():
@@ -165,6 +163,7 @@ def _process_bigquery():
         sample_id_column = bigquery_config.get('sample_id_column', '')
         sample_file_columns = bigquery_config.get('sample_file_columns', {})
         time_series_column = bigquery_config.get('time_series_column', '')
+        time_series_unit = bigquery_config.get('time_series_unit', '')
         table_names.sort()
 
     app.app.config['TABLES'] = table_names
@@ -172,6 +171,10 @@ def _process_bigquery():
     app.app.config['SAMPLE_ID_COLUMN'] = sample_id_column
     app.app.config['SAMPLE_FILE_COLUMNS'] = sample_file_columns
     app.app.config['TIME_SERIES_COLUMN'] = time_series_column
+    app.app.config['TIME_SERIES_UNIT'] = time_series_unit
+    if time_series_column and not time_series_unit:
+        raise EnvironmentError('time_series_column is set in bigquery.json '
+                               'but time_series_unit is not')
 
 
 def _process_facets(es):
@@ -180,9 +183,6 @@ def _process_facets(es):
 
     # Preserve order, so facets are returned in same order as the config file.
     facets = OrderedDict()
-
-    # Precompute mapping for getting time series values later.
-    mapping = es.indices.get_mapping(index=app.app.config['INDEX_NAME'])
 
     # Add a 'Samples Overview' facet if sample_file_columns were specified in
     # bigquery.json. This facet is mapped to multiple Elasticsearch facets, and
@@ -206,9 +206,12 @@ def _process_facets(es):
 
     app.app.config['NESTED_PATHS'] = elasticsearch_util.get_nested_paths(es)
 
+    # Precompute mapping for getting time series values later.
+    mapping = es.indices.get_mapping(index=app.app.config['INDEX_NAME'])
+
     for facet_config in facets_config:
         es_base_field_name = facet_config['elasticsearch_field_name']
-        if elasticsearch_util.is_time_series(es, es_base_field_name):
+        if elasticsearch_util.is_time_series(es, es_base_field_name, mapping):
             is_time_series = True
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es, es_base_field_name, mapping)
@@ -225,7 +228,7 @@ def _process_facets(es):
             if es_field_name in facets:
                 raise EnvironmentError('%s appears more than once in ui.json' %
                                        es_field_name)
-            field_type = elasticsearch_util.get_field_type(es, es_field_name)
+            field_type = elasticsearch_util.get_field_type(es, es_field_name, mapping)
             ui_facet_name = facet_config['ui_facet_name']
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name

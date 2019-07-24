@@ -102,7 +102,7 @@ class DatasetResponse(Model):
     def time_series_unit(self):
         """Gets the time_series_unit of this DatasetResponse.
 
-        Optional. The unit of time (such as month, year, etc.) with which to label the time axis.   # noqa: E501
+        If time_series_column in bigquery.json is set, this must be set. This is used to label the time axis -- eg Month or Year.   # noqa: E501
 
         :return: The time_series_unit of this DatasetResponse.
         :rtype: str
@@ -113,7 +113,7 @@ class DatasetResponse(Model):
     def time_series_unit(self, time_series_unit):
         """Sets the time_series_unit of this DatasetResponse.
 
-        Optional. The unit of time (such as month, year, etc.) with which to label the time axis.   # noqa: E501
+        If time_series_column in bigquery.json is set, this must be set. This is used to label the time axis -- eg Month or Year.   # noqa: E501
 
         :param time_series_unit: The time_series_unit of this DatasetResponse.
         :type time_series_unit: str

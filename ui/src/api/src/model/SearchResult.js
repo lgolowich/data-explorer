@@ -57,7 +57,7 @@ export default class SearchResult {
       if (data.hasOwnProperty("is_time_series")) {
         obj["is_time_series"] = ApiClient.convertToType(
           data["is_time_series"],
-          "Number"
+          "Boolean"
         );
       }
     }
@@ -85,8 +85,8 @@ export default class SearchResult {
    */
   facet_value = undefined;
   /**
-   * Is nonzero when facet_value is nonempty and the field is a time series field.
-   * @member {Number} is_time_series
+   * Is true when facet_value is nonempty and the field is a time series field.
+   * @member {Boolean} is_time_series
    */
   is_time_series = undefined;
 }

@@ -127,8 +127,9 @@ definitions:
       time_series_unit:
         type: string
         description: >
-          Optional. The unit of time (such as month, year, etc.) with
-          which to label the time axis.
+          If time_series_column in bigquery.json is set, this must be
+          set. This is used to label the time axis -- eg Month or
+          Year.
   FacetsResponse:
     description: "Results from a faceted search."
     properties:
@@ -158,13 +159,20 @@ definitions:
       es_field_type:
         type: string
         description: The Elasticsearch field type.
+      # If this is a regular facet (https://i.imgur.com/ug1mSEr.png),
+      # only value_names and value_counts are set.  If this is a time
+      # series facet (https://i.imgur.com/IU2SqWv.png), then
+      # value_names, time_names, time_series_value_counts are
+      # set. Consider https://i.imgur.com/IU2SqWv.png: the data is a
+      # table with 6 rows and 3 columns. Column names are time_names;
+      # row names are value_names; time_series_value_counts are the
+      # numbers in the table.
       value_names:
         type: array
         items:
           type: string
-        description: Array of names of possible facet values.
-      # Either values should be set, or both of time_names and
-      # time_series_value_counts should be set, but not all three.
+        description: >
+          Array of names of possible facet values.
       value_counts:
         type: array
         items:
@@ -185,9 +193,6 @@ definitions:
           2-dimensional array of facet value counts, indexed by time
           then value; indexes correspond to time_names and then
           value_names.
-      is_time_series:
-        type: integer
-        description: Nonzero if facet is time series facet.
   ExportUrlResponse:
     description: "Information for sending data to Terra"
     properties:
@@ -222,7 +227,7 @@ definitions:
           If this search result represents a facet, facet_value is the empty string.
           If this search result represents a facet and selected value, facet_value is the selected value.
       is_time_series:
-        type: integer
+        type: boolean
         description: >
-          Is nonzero when facet_value is nonempty and the field is a
-          time series field.
+          Is true when facet_value is nonempty and the field is a time
+          series field.

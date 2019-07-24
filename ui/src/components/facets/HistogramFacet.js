@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import "./HistogramFacet.css";
 import * as Style from "libs/style";
 import FacetHeader from "components/facets/FacetHeader";
-import HistogramPlot from "components/facets/HistogramPlot";
+import Histogram from "components/facets/Histogram";
 
 const styles = {
   histogramFacet: {
@@ -40,7 +40,7 @@ class HistogramFacet extends Component {
         />
         {this.props.facet.value_counts &&
           this.props.facet.value_counts.length > 0 && (
-            <HistogramPlot
+            <Histogram
               es_field_name={this.props.facet.es_field_name}
               es_field_type={this.props.facet.es_field_type}
               values={values}

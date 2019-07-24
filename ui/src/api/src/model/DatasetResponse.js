@@ -59,7 +59,7 @@ export default class DatasetResponse {
    */
   search_placeholder_text = undefined;
   /**
-   * Optional. The unit of time (such as month, year, etc.) with which to label the time axis.
+   * If time_series_column in bigquery.json is set, this must be set. This is used to label the time axis -- eg Month or Year.
    * @member {String} time_series_unit
    */
   time_series_unit = undefined;

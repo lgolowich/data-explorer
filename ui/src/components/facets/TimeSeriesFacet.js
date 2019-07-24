@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 import * as Style from "libs/style";
 import FacetHeader from "components/facets/FacetHeader";
-import TimeSeriesHistogramPlot from "components/facets/TimeSeriesHistogramPlot";
+import TimeSeriesHistograms from "components/facets/TimeSeriesHistograms";
 
 const styles = {
   timeSeriesFacet: {
@@ -31,7 +31,7 @@ class TimeSeriesFacet extends Component {
         />
         {this.props.facet.time_names &&
           this.props.facet.time_names.length > 0 && (
-            <TimeSeriesHistogramPlot
+            <TimeSeriesHistograms
               facet={this.props.facet}
               updateFacets={this.props.updateFacets}
               handleRemoveFacet={this.props.handleRemoveFacet}

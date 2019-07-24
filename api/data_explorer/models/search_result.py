@@ -31,14 +31,14 @@ class SearchResult(Model):
         :param facet_value: The facet_value of this SearchResult.  # noqa: E501
         :type facet_value: str
         :param is_time_series: The is_time_series of this SearchResult.  # noqa: E501
-        :type is_time_series: int
+        :type is_time_series: bool
         """
         self.swagger_types = {
             'facet_name': str,
             'facet_description': str,
             'elasticsearch_field_name': str,
             'facet_value': str,
-            'is_time_series': int
+            'is_time_series': bool
         }
 
         self.attribute_map = {
@@ -162,10 +162,10 @@ class SearchResult(Model):
     def is_time_series(self):
         """Gets the is_time_series of this SearchResult.
 
-        Is nonzero when facet_value is nonempty and the field is a time series field.   # noqa: E501
+        Is true when facet_value is nonempty and the field is a time series field.   # noqa: E501
 
         :return: The is_time_series of this SearchResult.
-        :rtype: int
+        :rtype: bool
         """
         return self._is_time_series
 
@@ -173,10 +173,10 @@ class SearchResult(Model):
     def is_time_series(self, is_time_series):
         """Sets the is_time_series of this SearchResult.
 
-        Is nonzero when facet_value is nonempty and the field is a time series field.   # noqa: E501
+        Is true when facet_value is nonempty and the field is a time series field.   # noqa: E501
 
         :param is_time_series: The is_time_series of this SearchResult.
-        :type is_time_series: int
+        :type is_time_series: bool
         """
 
         self._is_time_series = is_time_series

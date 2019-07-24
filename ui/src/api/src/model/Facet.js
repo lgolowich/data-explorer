@@ -72,12 +72,6 @@ export default class Facet {
           [["Number"]]
         );
       }
-      if (data.hasOwnProperty("is_time_series")) {
-        obj["is_time_series"] = ApiClient.convertToType(
-          data["is_time_series"],
-          "Number"
-        );
-      }
     }
     return obj;
   }
@@ -122,9 +116,4 @@ export default class Facet {
    * @member {Array.<Array.<Number>>} time_series_value_counts
    */
   time_series_value_counts = undefined;
-  /**
-   * Nonzero if facet is time series facet.
-   * @member {Number} is_time_series
-   */
-  is_time_series = undefined;
 }

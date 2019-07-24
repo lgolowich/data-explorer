@@ -79,6 +79,10 @@ def _check_preconditions():
 
 
 def _get_range_clause(column, value, bucket_interval):
+    """Returns an SQL clause specifying that column is in the range
+    specified by value. Uses bucket_interval to avoid potentially
+    ambiguous ranges such as 1.0B-1.9B, which really means [1B, 2B).
+    """
     if value[0] == '-':
         # avoid minus sign with split
         arr = value[1:].split('-', 1)
