@@ -212,21 +212,43 @@ def _process_facets(es):
 
     for facet_config in facets_config:
         es_base_field_name = facet_config['elasticsearch_field_name']
+        es_parent_field_name = es_base_field_name.rsplit('.', 1)[0]
         is_time_series = elasticsearch_util.is_time_series(
             es, es_base_field_name, mapping)
+        parent_is_time_series = elasticsearch_util.is_time_series(
+            es, es_parent_field_name, mapping)
         if is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es, es_base_field_name, mapping)
             es_field_names = [
                 es_base_field_name + '.' + tsv for tsv in time_series_vals
             ]
+        elif parent_is_time_series:
+            time_series_vals = elasticsearch_util.get_time_series_vals(
+                es, es_parent_field_name, mapping)
+            es_field_names = [es_base_field_name]
         else:
             time_series_vals = []
             es_field_names = [es_base_field_name]
 
         for es_field_name in es_field_names:
-            if es_field_name in facets:
-                raise EnvironmentError('%s appears more than once in ui.json' %
+            # es_field_name could have its own separate facet, could
+            # have a panel within a time series facet, or could have
+            # both. separate_panel and time_series_panel determine
+            # which is the case.
+            separate_panel = not (is_time_series
+                                  and (es_field_name not in facets
+                                       or not facets[es_field_name]['separate_panel']))
+            time_series_panel = (is_time_series
+                                 or (es_field_name in facets
+                                     and facets[es_field_name]['time_series_panel']))
+
+            if (es_field_name in facets
+                and is_time_series == facets[es_field_name]['time_series_panel']):
+                # es_field_name is allowed to occur at most twice,
+                # once within a time series facet and once as a
+                # separate facet
+                raise EnvironmentError('%s appears too many times in ui.json' %
                                        es_field_name)
             field_type = elasticsearch_util.get_field_type(
                 es, es_field_name, mapping)
@@ -236,7 +258,8 @@ def _process_facets(es):
             facets[es_field_name] = {
                 'ui_facet_name': ui_facet_name,
                 'type': field_type,
-                'is_time_series': is_time_series
+                'time_series_panel': time_series_panel,
+                'separate_panel': separate_panel
             }
             if 'ui_facet_description' in facet_config:
                 facets[es_field_name]['description'] = facet_config[
