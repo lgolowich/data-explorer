@@ -26,23 +26,22 @@ def _process_extra_facets(extra_facets):
     es = Elasticsearch(current_app.config['ELASTICSEARCH_URL'])
     facets = OrderedDict()
     mapping = es.indices.get_mapping(index=current_app.config['INDEX_NAME'])
-    time_series_unit = current_app.config['TIME_SERIES_UNIT']
 
     for es_base_field_name in extra_facets:
         es_parent_field_name = es_base_field_name.rsplit('.', 1)[0]
         is_time_series = elasticsearch_util.is_time_series(
-            es, es_base_field_name, mapping)
+            es_base_field_name, mapping)
         parent_is_time_series = elasticsearch_util.is_time_series(
-            es, es_parent_field_name, mapping)
+            es_parent_field_name, mapping)
         if is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
-                es, es_base_field_name, mapping)
+                es_base_field_name, mapping)
             es_field_names = [
                 es_base_field_name + '.' + tsv for tsv in time_series_vals
             ]
         elif parent_is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
-                es, es_parent_field_name, mapping)
+                es_parent_field_name, mapping)
             es_field_names = [es_base_field_name]
         else:
             time_series_vals = []
@@ -61,21 +60,29 @@ def _process_extra_facets(extra_facets):
                                      and facets[es_field_name]['time_series_panel']))
 
             field_type = elasticsearch_util.get_field_type(
-                es, es_field_name, mapping)
+                es_field_name, mapping)
             name_arr = es_base_field_name.split('.')
             if parent_is_time_series:
-                ui_facet_name = '%s (%s %s)' % (name_arr[-2], time_series_unit,
-                                                name_arr[-1])
+                # Will add time series value in facets_get.
+                ui_facet_name = name_arr[-2]
             else:
-                ui_facet_name = es_base_field_name.split('.')[-1]
+                ui_facet_name = name_arr[-1]
                 if es_field_name.startswith('samples.'):
                     ui_facet_name = '%s (samples)' % ui_facet_name
+            no_name_suffix = (parent_is_time_series
+                              or (es_field_name in facets
+                                  and facets[es_field_name]['no_name_suffix']))
 
+            if es_field_name in facets and is_time_series:
+                # Need to remove and re-insert time series items to
+                # preserve ordering.
+                facets.pop(es_field_name)
             facets[es_field_name] = {
                 'ui_facet_name': ui_facet_name,
                 'type': field_type,
                 'time_series_panel': time_series_panel,
-                'separate_panel': separate_panel
+                'separate_panel': separate_panel,
+                'no_name_suffix': no_name_suffix
             }
             if parent_is_time_series:
                 facets[es_field_name][
@@ -214,9 +221,13 @@ def _get_time_series_facet(time_series_facets, es_response_facets):
 
 
 def _get_histogram_facet(es_field_name, facet_info, es_response_facets):
+    name = facet_info.get('ui_facet_name')
+    if facet_info.get('no_name_suffix', False):
+        name = '%s (%s %s)' % (name, current_app.config['TIME_SERIES_UNIT'],
+                               es_field_name.split('.')[-1])
     value_names, value_counts = _get_facet_values(es_field_name, facet_info,
                                                   es_response_facets)
-    return Facet(name=facet_info.get('ui_facet_name'),
+    return Facet(name=name,
                  description=facet_info.get('description'),
                  es_field_name=es_field_name,
                  es_field_type=facet_info.get('type'),
@@ -278,7 +289,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 _get_time_series_facet(combined_facets[start:i],
                                        es_response_facets))
         else:
-            assert facet_info.get('separate_panel')
+            assert facet_info.get('separate_panel', True)
             i += 1
             facets.append(
                 _get_histogram_facet(es_field_name, facet_info,

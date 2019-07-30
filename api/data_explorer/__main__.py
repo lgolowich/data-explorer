@@ -214,18 +214,18 @@ def _process_facets(es):
         es_base_field_name = facet_config['elasticsearch_field_name']
         es_parent_field_name = es_base_field_name.rsplit('.', 1)[0]
         is_time_series = elasticsearch_util.is_time_series(
-            es, es_base_field_name, mapping)
+            es_base_field_name, mapping)
         parent_is_time_series = elasticsearch_util.is_time_series(
-            es, es_parent_field_name, mapping)
+            es_parent_field_name, mapping)
         if is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
-                es, es_base_field_name, mapping)
+                es_base_field_name, mapping)
             es_field_names = [
                 es_base_field_name + '.' + tsv for tsv in time_series_vals
             ]
         elif parent_is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
-                es, es_parent_field_name, mapping)
+                es_parent_field_name, mapping)
             es_field_names = [es_base_field_name]
         else:
             time_series_vals = []
@@ -251,10 +251,15 @@ def _process_facets(es):
                 raise EnvironmentError('%s appears too many times in ui.json' %
                                        es_field_name)
             field_type = elasticsearch_util.get_field_type(
-                es, es_field_name, mapping)
+                es_field_name, mapping)
             ui_facet_name = facet_config['ui_facet_name']
             if es_field_name.startswith('samples.'):
                 ui_facet_name = '%s (samples)' % ui_facet_name
+
+            if es_field_name in facets and is_time_series:
+                # Need to remove and re-insert time series items to
+                # preserve ordering.
+                facets.pop(es_field_name)
             facets[es_field_name] = {
                 'ui_facet_name': ui_facet_name,
                 'type': field_type,
