@@ -8,7 +8,7 @@ import colors from "libs/colors";
 import "./HistogramFacet.css";
 
 const styles = {
-  timeSeriesHistogramPlot: {
+  timeSeriesHistogram: {
     overflowX: "visible",
     overflowY: "auto"
   },
@@ -34,7 +34,7 @@ function maxCount(arr) {
 
 // Creates small multiples plots for displaying time series data. See
 // https://i.imgur.com/YsAV5P6.png for an example.
-class TimeSeriesHistogramPlot extends Component {
+class TimeSeriesHistograms extends Component {
   constructor(props) {
     super(props);
     this.isValueDimmed = this.isValueDimmed.bind(this);
@@ -234,7 +234,7 @@ class TimeSeriesHistogramPlot extends Component {
     );
 
     return (
-      <div className={classes.timeSeriesHistogramPlot}>
+      <div className={classes.timeSeriesHistogram}>
         <div className={classes.vega}> {vega} </div>
       </div>
     );
@@ -285,4 +285,4 @@ class TimeSeriesHistogramPlot extends Component {
   }
 }
 
-export default withStyles(styles)(TimeSeriesHistogramPlot);
+export default withStyles(styles)(TimeSeriesHistograms);
