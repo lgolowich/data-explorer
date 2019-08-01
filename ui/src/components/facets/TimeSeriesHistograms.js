@@ -186,15 +186,17 @@ class TimeSeriesHistograms extends Component {
         let name = this.props.facet.value_names[vi];
         let count = this.props.facet.time_series_value_counts[ti][vi];
         let time = this.props.facet.time_names[ti];
+        // To compute elasticsearch field name with this time, need to
+        // replace decimal point with underscore as is done in the
+        // index.
+        let tsv_es_field_name =
+          this.props.facet.es_field_name + "." + time.replace(".", "_");
         data.values.push({
           facet_value: name,
           count: count,
-          time_series_value: parseFloat(time.replace("_", ".")),
-          time_series_value_str: time,
-          dimmed: this.isValueDimmed(
-            name,
-            this.props.facet.es_field_name + "." + time
-          ),
+          time_series_value: parseFloat(time),
+          tsv_es_field_name: tsv_es_field_name,
+          dimmed: this.isValueDimmed(name, tsv_es_field_name),
           text: `${name}: ${count}`,
           opaque: true
         });
@@ -253,10 +255,8 @@ class TimeSeriesHistograms extends Component {
     // Ignore clicks which are not located on histogram
     // bars.
     if (item && item.datum && item.datum.facet_value) {
-      let tsv_es_field_name =
-        this.props.facet.es_field_name + "." + item.datum.time_series_value_str;
       let selectedValues = this.props.selectedFacetValues.get(
-        tsv_es_field_name
+        item.datum.tsv_es_field_name
       );
       // facetValue is a string, eg "female"
       // If bar was clicked, item.datum.facet_value is populated.
@@ -276,7 +276,11 @@ class TimeSeriesHistograms extends Component {
         isSelected = true;
       }
 
-      this.props.updateFacets(tsv_es_field_name, facetValue, isSelected);
+      this.props.updateFacets(
+        item.datum.tsv_es_field_name,
+        facetValue,
+        isSelected
+      );
     }
   }
 
