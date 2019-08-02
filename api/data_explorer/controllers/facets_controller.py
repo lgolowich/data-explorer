@@ -225,10 +225,13 @@ def _get_histogram_facet(es_field_name, facet_info, es_response_facets):
     name = facet_info.get('ui_facet_name')
     if facet_info.get('no_name_suffix', False):
         tsv = es_field_name.split('.')[-1].replace('_', '.')
-        if int(tsv.split('.')[-1]):
-            tsv = float(tsv)
-        else:
-            tsv = int(float(tsv))
+        if '.' in tsv:
+            # The UI displays integer valued times as ints, e.g. 3.0
+            # as 3. These conversions produce the same behavior here.
+            if int(tsv.split('.')[-1]):
+                tsv = float(tsv)
+            else:
+                tsv = int(float(tsv))
         name = '%s (%s %s)' % (name, current_app.config['TIME_SERIES_UNIT'],
                                tsv)
     value_names, value_counts = _get_facet_values(es_field_name, facet_info,
