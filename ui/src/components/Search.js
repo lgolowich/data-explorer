@@ -138,6 +138,16 @@ class Search extends React.Component {
     );
   }
 
+  parseTimeSeriesValue(esFieldName) {
+    let arr = esFieldName.split(".");
+    let timeSeriesValue = arr[arr.length - 1].replace("_", ".");
+    if (timeSeriesValue === "unknown") {
+      return "Unknown";
+    } else {
+      return parseFloat(timeSeriesValue);
+    }
+  }
+
   // renderOption is used to render 1) chip, 2) row in drop-down.
   renderOption = option => {
     // If option.label is set, we are rendering a chip.
@@ -145,10 +155,7 @@ class Search extends React.Component {
       return option.label;
     }
     if (option.isTimeSeries) {
-      var fieldNameArr = option.esFieldName.split(".");
-      var timeSeriesValue = parseFloat(
-        fieldNameArr[fieldNameArr.length - 1].replace("_", ".")
-      );
+      var timeSeriesValue = this.parseTimeSeriesValue(option.esFieldName);
     }
     if (option.facetValue !== null && option.facetValue !== "") {
       if (option.isTimeSeries) {
@@ -245,7 +252,7 @@ class Search extends React.Component {
           " (" +
           this.props.timeSeriesUnit +
           " " +
-          parseFloat(keySplit[keySplit.length - 1].replace("_", ".")) +
+          this.parseTimeSeriesValue(key) +
           ")";
       if (values.length > 0) {
         for (let value of values) {
