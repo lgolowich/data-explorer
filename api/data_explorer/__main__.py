@@ -179,17 +179,16 @@ def _process_bigquery():
 
 
 def _add_facet(es_field_name, is_time_series, time_series_panel,
-               separate_panel, facet_config, time_series_vals, facets,
-               es, mapping):
+               separate_panel, facet_config, time_series_vals, facets, es,
+               mapping):
     if (es_field_name in facets
-        and is_time_series == facets[es_field_name]['time_series_panel']):
+            and is_time_series == facets[es_field_name]['time_series_panel']):
         # es_field_name is allowed to occur at most twice,
         # once within a time series facet and once as a
         # separate facet
         raise EnvironmentError('%s appears too many times in ui.json' %
                                es_field_name)
-    field_type = elasticsearch_util.get_field_type(
-        es_field_name, mapping)
+    field_type = elasticsearch_util.get_field_type(es_field_name, mapping)
     ui_facet_name = facet_config['ui_facet_name']
     if es_field_name.startswith('samples.'):
         ui_facet_name = '%s (samples)' % ui_facet_name
@@ -201,10 +200,10 @@ def _add_facet(es_field_name, is_time_series, time_series_panel,
     facets[es_field_name] = {
         'ui_facet_name': ui_facet_name,
         'type': field_type,
-         # es_field_name could have its own separate facet, could have
-         # a panel within a time series facet, or could have
-         # both. separate_panel and time_series_panel determine which
-         # is the case.
+        # es_field_name could have its own separate facet, could have
+        # a panel within a time series facet, or could have
+        # both. separate_panel and time_series_panel determine which
+        # is the case.
         'time_series_panel': time_series_panel,
         'separate_panel': separate_panel
     }
@@ -265,20 +264,20 @@ def _process_facets(es):
             for es_field_name in es_field_names:
                 separate_panel = (es_field_name in facets
                                   and facets[es_field_name]['separate_panel'])
-                _add_facet(es_field_name, is_time_series, True,
-                           separate_panel, facet_config,
-                           time_series_vals, facets, es, mapping)
+                _add_facet(es_field_name, is_time_series, True, separate_panel,
+                           facet_config, time_series_vals, facets, es, mapping)
         elif parent_is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es_parent_field_name, mapping)
-            time_series_panel = (es_base_field_name in facets
-                                 and facets[es_base_field_name]['time_series_panel'])
-            _add_facet(es_base_field_name, is_time_series,
-                       time_series_panel, True, facet_config,
-                       time_series_vals, facets, es, mapping)
+            time_series_panel = (
+                es_base_field_name in facets
+                and facets[es_base_field_name]['time_series_panel'])
+            _add_facet(es_base_field_name, is_time_series, time_series_panel,
+                       True, facet_config, time_series_vals, facets, es,
+                       mapping)
         else:
-            _add_facet(es_base_field_name, is_time_series, False,
-                       True, facet_config, [], facets, es, mapping)
+            _add_facet(es_base_field_name, is_time_series, False, True,
+                       facet_config, [], facets, es, mapping)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch

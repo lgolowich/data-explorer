@@ -27,11 +27,13 @@ def _results_from_fields_index(fields, mapping):
                     es_base_field_name, mapping)
                 for tsv in time_series_vals:
                     results.append(
-                        SearchResult(facet_name=field["_source"]["name"],
-                                     facet_description=field["_source"]["description"],
-                                     elasticsearch_field_name=es_base_field_name + '.' + tsv,
-                                     facet_value="",
-                                     is_time_series=True))
+                        SearchResult(
+                            facet_name=field["_source"]["name"],
+                            facet_description=field["_source"]["description"],
+                            elasticsearch_field_name=es_base_field_name + '.' +
+                            tsv,
+                            facet_value="",
+                            is_time_series=True))
         else:
             results.append(
                 SearchResult(facet_name=field["_source"]["name"],
@@ -43,10 +45,12 @@ def _results_from_fields_index(fields, mapping):
                     es_base_field_name, mapping)
                 for tsv in time_series_vals:
                     results.append(
-                        SearchResult(facet_name=field["_source"]["name"],
-                                     elasticsearch_field_name=es_base_field_name + '.' + tsv,
-                                     facet_value="",
-                                     is_time_series=True))
+                        SearchResult(
+                            facet_name=field["_source"]["name"],
+                            elasticsearch_field_name=es_base_field_name + '.' +
+                            tsv,
+                            facet_value="",
+                            is_time_series=True))
     return results
 
 

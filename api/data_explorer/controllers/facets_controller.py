@@ -19,10 +19,9 @@ def _get_bucket_interval(facet):
 
 
 def _add_facet(es_field_name, is_time_series, parent_is_time_series,
-               time_series_panel, separate_panel, time_series_vals,
-               facets, es, mapping):
-    field_type = elasticsearch_util.get_field_type(
-        es_field_name, mapping)
+               time_series_panel, separate_panel, time_series_vals, facets, es,
+               mapping):
+    field_type = elasticsearch_util.get_field_type(es_field_name, mapping)
     name_arr = es_field_name.split('.')
     if is_time_series or parent_is_time_series:
         # If parent_is_time_series, then no_name_suffix will tell
@@ -54,7 +53,8 @@ def _add_facet(es_field_name, is_time_series, parent_is_time_series,
     if is_time_series or parent_is_time_series:
         facets[es_field_name][
             'description'] = elasticsearch_util.get_field_description(
-                es, es_field_name.rsplit('.', 1)[0])
+                es,
+                es_field_name.rsplit('.', 1)[0])
     else:
         facets[es_field_name][
             'description'] = elasticsearch_util.get_field_description(
@@ -89,21 +89,21 @@ def _process_extra_facets(extra_facets):
                 separate_panel = (es_field_name in facets
                                   and facets[es_field_name]['separate_panel'])
                 _add_facet(es_field_name, is_time_series,
-                           parent_is_time_series, True,
-                           separate_panel, time_series_vals, facets,
-                           es, mapping)
+                           parent_is_time_series, True, separate_panel,
+                           time_series_vals, facets, es, mapping)
         elif parent_is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es_parent_field_name, mapping)
-            time_series_panel = (es_base_field_name in facets
-                                 and facets[es_base_field_name]['time_series_panel'])
+            time_series_panel = (
+                es_base_field_name in facets
+                and facets[es_base_field_name]['time_series_panel'])
             _add_facet(es_base_field_name, is_time_series,
                        parent_is_time_series, time_series_panel, True,
                        time_series_vals, facets, es, mapping)
         else:
             _add_facet(es_base_field_name, is_time_series,
-                       parent_is_time_series, False, True, [], facets,
-                       es, mapping)
+                       parent_is_time_series, False, True, [], facets, es,
+                       mapping)
 
     # Map from Elasticsearch field name to dict with ui facet name,
     # Elasticsearch field type, optional UI facet description and Elasticsearch
@@ -297,9 +297,10 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                 if (next_facet_info.get('time_series_panel')
                         and next_ts_field_name == ts_field_name):
                     if next_facet_info.get('separate_panel'):
-                        facets.append(_get_histogram_facet(next_es_field_name,
-                                                           next_facet_info,
-                                                           es_response_facets))
+                        facets.append(
+                            _get_histogram_facet(next_es_field_name,
+                                                 next_facet_info,
+                                                 es_response_facets))
                     i += 1
                 else:
                     break
