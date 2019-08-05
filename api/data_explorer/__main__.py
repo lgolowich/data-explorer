@@ -271,8 +271,8 @@ def _process_facets(es):
         elif parent_is_time_series:
             time_series_vals = elasticsearch_util.get_time_series_vals(
                 es_parent_field_name, mapping)
-            time_series_panel = (es_field_name in facets
-                                 and facets[es_field_name]['time_series_panel'])
+            time_series_panel = (es_base_field_name in facets
+                                 and facets[es_base_field_name]['time_series_panel'])
             _add_facet(es_base_field_name, is_time_series,
                        time_series_panel, True, facet_config,
                        time_series_vals, facets, es, mapping)
