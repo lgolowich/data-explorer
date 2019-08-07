@@ -236,7 +236,7 @@ def _get_time_series_facet(time_series_facets, es_response_facets):
 def _get_histogram_facet(es_field_name, facet_info, es_response_facets):
     name = facet_info.get('ui_facet_name')
     if facet_info.get('no_name_suffix', False):
-        tsv = es_field_name.split('.')[-1].replace('_', '.')
+        tsv = _get_time_name(es_field_name.split('.')[-1])
         if '.' in tsv:
             # The UI displays integer valued times as ints, e.g. 3.0
             # as 3. These conversions produce the same behavior here.
