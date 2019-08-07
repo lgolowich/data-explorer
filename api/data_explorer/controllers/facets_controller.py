@@ -24,13 +24,16 @@ def _add_facet(es_field_name, is_time_series, parent_is_time_series,
     field_type = elasticsearch_util.get_field_type(es_field_name, mapping)
     name_arr = es_field_name.split('.')
     if is_time_series or parent_is_time_series:
-        # If parent_is_time_series, then facets_get will add on the
-        # time series value to ui_facet_name for the separate panel.
+        # If parent_is_time_series, then need_name_suffix will tell
+        # facets_get to add on the time series value to ui_facet_name.
         ui_facet_name = name_arr[-2]
     else:
         ui_facet_name = name_arr[-1]
         if es_field_name.startswith('samples.'):
             ui_facet_name = '%s (samples)' % ui_facet_name
+    need_name_suffix = (parent_is_time_series
+                        or (es_field_name in facets
+                            and facets[es_field_name]['need_name_suffix']))
 
     if es_field_name in facets and is_time_series:
         # Need to remove and re-insert time series items to
@@ -45,6 +48,7 @@ def _add_facet(es_field_name, is_time_series, parent_is_time_series,
         # is the case.
         'time_series_panel': time_series_panel,
         'separate_panel': separate_panel,
+        'need_name_suffix': need_name_suffix
     }
     if is_time_series or parent_is_time_series:
         facets[es_field_name][
@@ -229,12 +233,9 @@ def _get_time_series_facet(time_series_facets, es_response_facets):
                  time_series_value_counts=time_series_value_counts)
 
 
-def _get_histogram_facet(es_field_name,
-                         facet_info,
-                         es_response_facets,
-                         no_name_suffix=False):
+def _get_histogram_facet(es_field_name, facet_info, es_response_facets):
     name = facet_info.get('ui_facet_name')
-    if no_name_suffix:
+    if facet_info.get('need_name_suffix'):
         tsv = _get_time_name(es_field_name.split('.')[-1])
         if '.' in tsv:
             # The UI displays integer valued times as ints, e.g. 3.0
@@ -302,7 +303,7 @@ def facets_get(filter=None, extraFacets=None):  # noqa: E501
                         facets.append(
                             _get_histogram_facet(next_es_field_name,
                                                  next_facet_info,
-                                                 es_response_facets, True))
+                                                 es_response_facets))
                     i += 1
                 else:
                     break
