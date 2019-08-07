@@ -192,6 +192,11 @@ def _add_facet(es_field_name, is_time_series, time_series_panel,
     ui_facet_name = facet_config['ui_facet_name']
     if es_field_name.startswith('samples.'):
         ui_facet_name = '%s (samples)' % ui_facet_name
+    if (es_field_name in facets
+            and facets[es_field_name]['ui_facet_name'] != ui_facet_name):
+        raise EnvironmentError(
+            '%s has inconsistent values for ui_facet_name in ui.json' %
+            es_field_name)
 
     if es_field_name in facets and is_time_series:
         # Need to remove and re-insert time series items to
@@ -285,8 +290,8 @@ def _process_facets(es):
     # - time_series_panel: If facet is for a time series field, and is part of a
     #       larger time series facet that contains a panel for each time
     #       (https://i.imgur.com/7txytrL.png)
-    # - separate_panel: If facet is either not a time series field, or is a time
-    #       series field with its own separate panel
+    # - separate_panel: If facet is either not for a time series field, or is
+    #       for a time series field with its own separate panel
     #       (https://i.imgur.com/JsTb5r0.png)
     # - description: optional UI facet description
     # - es_facet: Elasticsearch facet
