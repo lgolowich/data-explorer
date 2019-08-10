@@ -106,7 +106,7 @@ class TimeSeriesHistograms extends Component {
       padding: {
         left: 11,
         top: 17,
-        right: 38,
+        right: 30,
         bottom: 16
       },
       width: 50
